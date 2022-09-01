@@ -14,6 +14,8 @@ import { RestaurantInput, RestaurantOutput } from  "./dtos/restaurant.dto";
 import { SearchRestaurantInput, SearchRestaurantOutput } from "./dtos/search-restaurant.dto";
 import { CreateDishInput, CreateDishOutput } from "./dtos/create-dish.dto";
 import { Dish } from "./entities/dish.entitiy";
+import { EditDishInput, EditDishOutput } from "./dtos/edit-dish.dto";
+import { DeleteDishInput, DeleteDishOutput } from "./dtos/delete-dish.dto";
 
 @Injectable()
 export class RestaurantService {
@@ -335,4 +337,73 @@ export class RestaurantService {
         }    
     }
 
+    async editDish(
+        owner : User,
+        editDishInput : EditDishInput,
+    ) : Promise<EditDishOutput> {
+        try {
+            // 찾는다
+            const dish = await this.dishes.findOne(
+                {
+                    where : {
+                        id: editDishInput.dishId,
+                    },
+                    relations: ['restaurant'],
+                }
+            );
+
+            if(!dish) {
+                return {ok:false, error:"수정하고자 하는 dish가 없습니다."};
+            }
+            // 사용자 정보가 일치하는지 본다.
+            if( owner.id !== dish.restaurant.owenrId )
+            {
+                return {ok:false, error:"레스토랑 오너가 아닙니다. dish를 수정 할 수 없습니다."};
+            }
+            // 업데이트
+            await this.dishes.save([{
+                id : editDishInput.dishId,
+                ...editDishInput, 
+            }])
+
+            return {ok:true};
+        } catch (error) {
+            console.log(error);
+            return {ok:false, error: "디시를 수정 할 수 없습니다. "};
+        }
+    }
+
+    async deleteDish(
+        owner : User,
+        deleteDishInput : DeleteDishInput,
+    ) : Promise<DeleteDishOutput> {
+        try {
+            // 찾는다
+            const dish = await this.dishes.findOne(
+                {
+                    where : {
+                        id: deleteDishInput.dishId,
+                    },
+                    relations: ['restaurant'],
+                }
+            );
+
+            if(!dish) {
+                return {ok:false, error:"삭제하고자 하는 dish가 없습니다."};
+            }
+            // 사용자 정보가 일치하는지 본다.
+            if( owner.id !== dish.restaurant.owenrId )
+            {
+                return {ok:false, error:"레스토랑 오너가 아닙니다. dish를 삭제할 수 없습니다."};
+            }
+            // 삭제한다.
+            await this.dishes.delete(deleteDishInput.dishId);
+            return {ok:true};
+        } catch (error) {
+            console.log(error);
+            return {ok:false, error: "삭제 할 수 없습니다."}
+        }
+    }
+
 } // end class
+
