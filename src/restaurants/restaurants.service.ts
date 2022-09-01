@@ -12,6 +12,7 @@ import { CategoryInput, CategoryOutput } from "./dtos/category.dto";
 import { RestaurantsInput, RestaurantsOutput } from "./dtos/restaurants.dto";
 import { RestaurantInput, RestaurantOutput } from  "./dtos/restaurant.dto";
 import { SearchRestaurantInput, SearchRestaurantOutput } from "./dtos/search-restaurant.dto";
+import { CreateDishInput, CreateDishOutput } from "./dtos/create-dish.dto";
 
 @Injectable()
 export class RestaurantService {
@@ -250,7 +251,8 @@ export class RestaurantService {
                 {
                     where : {
                         id : restaurantInput.restaurantId,
-                    }
+                    },
+                    relations: ['menu'],
                 }
             )
             if(!restaurant) {
@@ -289,4 +291,16 @@ export class RestaurantService {
         }
     }
 
-}
+    async createDish(
+        owner:User, createDishInput:CreateDishInput
+    ) : Promise<CreateDishOutput> {
+        try {
+            
+            
+        } catch (error) {
+            console.log(error);
+            return { ok : false, error: "디시를 생성하지 못했습니다." };
+        }    
+    }
+
+} // end class

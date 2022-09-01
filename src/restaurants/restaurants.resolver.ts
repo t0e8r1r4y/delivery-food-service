@@ -13,13 +13,10 @@ import { CategoryInput, CategoryOutput } from "./dtos/category.dto";
 import { RestaurantsInput, RestaurantsOutput } from "./dtos/restaurants.dto";
 import { RestaurantInput, RestaurantOutput } from "./dtos/restaurant.dto";
 import { SearchRestaurantInput, SearchRestaurantOutput } from "./dtos/search-restaurant.dto";
+import { Dish } from "./entities/dish.entitiy";
+import { CreateDishOutput, CreateDishInput } from "./dtos/create-dish.dto";
 
 // @TODO 
-// - see Categories
-// - see Restaurants by Category ( pagination )
-// - See Restaurants ( pagination )
-// - See Restaurant
-
 // - create Dish
 // - Edit Dish
 // - Delete Dish
@@ -109,4 +106,20 @@ export class CategoryResolver {
     category(@Args('input') categoryInput:CategoryInput) : Promise<CategoryOutput> {
         return this.restaurantService.findCategoryBySlug(categoryInput);
     } 
+}
+
+
+// @TODO - 구현 내용은 적지만 다시 파일을 구분하여 refactor
+@Resolver(of => Dish)
+export class DishResolver {
+    constructor(private readonly restaurantService : RestaurantService) {}
+
+    @Mutation(type => CreateDishOutput)
+    @Role(['Owner'])
+    async createDish(
+        @AuthUser() owner: User,
+        @Args('input') createDishInput : CreateDishInput
+    ) : Promise<CreateDishOutput> {
+        return this.restaurantService.createDish(owner, createDishInput);
+    }
 }
