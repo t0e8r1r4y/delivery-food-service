@@ -5,6 +5,7 @@ import { Column, Entity, ManyToOne, OneToMany, RelationId } from "typeorm";
 import { Category } from "./category.entity";
 import { User } from "../../users/entities/user.entity";
 import { Dish } from "./dish.entitiy";
+import { Order } from "../../orders/entities/order.entity";
 
 // GraphQL과 TypeORM을 함께 사용함 - DB에 model을 생성하고 자동으로 graphQL에 스키마를 작성하기 위한 목적
 // Entity를 기준으로 dto를 변경하도록 함
@@ -46,6 +47,13 @@ export class Restaurant extends CoreEntity {
         { onDelete: 'CASCADE' },
     )
     owner: User;
+
+    @Field(type=> [Order])
+    @OneToMany(
+        type => Order,
+        order => order.restaurant,
+    )
+    orders: Order[]
 
     @RelationId((restaurant : Restaurant) => restaurant.owner )
     owenrId : number;

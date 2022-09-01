@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from "@nestjs/common";
 import { IsBoolean, IsEmail, IsEnum, IsString } from "class-validator";
 import { Restaurant } from "../../restaurants/entities/restaurant.entity";
+import { Order } from "../../orders/entities/order.entity";
 
 export enum UserRole {
     Client = 'Client',
@@ -46,6 +47,20 @@ export class User extends CoreEntity {
         restaurant => restaurant.owner
     )
     restaurants: Restaurant[]
+
+    @Field(type=> [Order])
+    @OneToMany(
+        type => Order,
+        order => order.customer,
+    )
+    orders: Order[]
+
+    @Field(type=> [Order])
+    @OneToMany(
+        type => Order,
+        order => order.driver,
+    )
+    riders: Order[]
 
     @BeforeInsert()
     @BeforeUpdate() // 왜 안됨?

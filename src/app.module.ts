@@ -16,6 +16,8 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { Category } from './restaurants/entities/category.entity';
 import { RestaurnatsModule } from './restaurants/restaurants.module';
 import { Dish } from './restaurants/entities/dish.entitiy';
+import { OrdersModule } from './orders/orders.module';
+import { Order } from './orders/entities/order.entity';
 
 @Module({
   imports: [
@@ -53,7 +55,7 @@ import { Dish } from './restaurants/entities/dish.entitiy';
       // [옵션] 개발 환경에서 sql을 확인하고 싶을 때
       logging: process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       // entities: [Restaurant],
-      entities: [User, Verification, Restaurant, Category, Dish],
+      entities: [User, Verification, Restaurant, Category, Dish, Order],
     }),
     GraphQLModule.forRootAsync( {
       // Note : GraphQL의 버전에 따른 이슈입니다.
@@ -78,6 +80,7 @@ import { Dish } from './restaurants/entities/dish.entitiy';
     UsersModule,
     CommonModule,
     AuthModule,
+    OrdersModule,
   ],
   controllers: [],
   providers: [],
