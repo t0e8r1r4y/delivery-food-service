@@ -1,9 +1,10 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import { IsString, Length } from "class-validator";
 import { CoreEntity } from "../../common/entities/core.entity";
-import { Column, Entity, ManyToOne, RelationId } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, RelationId } from "typeorm";
 import { Category } from "./category.entity";
 import { User } from "../../users/entities/user.entity";
+import { Dish } from "./dish.entitiy";
 
 // GraphQL과 TypeORM을 함께 사용함 - DB에 model을 생성하고 자동으로 graphQL에 스키마를 작성하기 위한 목적
 // Entity를 기준으로 dto를 변경하도록 함
@@ -48,4 +49,11 @@ export class Restaurant extends CoreEntity {
 
     @RelationId((restaurant : Restaurant) => restaurant.owner )
     owenrId : number;
+
+    @Field(type => [Dish], {nullable: true})
+    @OneToMany(
+        type => Dish,
+        dish => dish.restaurant,
+    )
+    menu: Dish[];
 }

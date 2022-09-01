@@ -15,6 +15,7 @@ import { MailModule } from './mail/mail.module';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { Category } from './restaurants/entities/category.entity';
 import { RestaurnatsModule } from './restaurants/restaurants.module';
+import { Dish } from './restaurants/entities/dish.entitiy';
 
 @Module({
   imports: [
@@ -52,7 +53,7 @@ import { RestaurnatsModule } from './restaurants/restaurants.module';
       // [옵션] 개발 환경에서 sql을 확인하고 싶을 때
       logging: process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       // entities: [Restaurant],
-      entities: [User, Verification, Restaurant, Category],
+      entities: [User, Verification, Restaurant, Category, Dish],
     }),
     GraphQLModule.forRootAsync( {
       // Note : GraphQL의 버전에 따른 이슈입니다.
