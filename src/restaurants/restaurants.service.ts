@@ -300,6 +300,8 @@ export class RestaurantService {
         owner:User, createDishInput:CreateDishInput
     ) : Promise<CreateDishOutput> {
         try {
+
+            console.log(createDishInput);
             // 일단 dish가 존재하기 위해서는 레스토랑이 있어야함
             const restaurant = await this.restaurants.findOne(
                 {
@@ -324,13 +326,15 @@ export class RestaurantService {
             // 디시 생성
             // 아래 코드 보다는
             // let dish = this.dishes.create(createDishInput);
-            // dish.restaurant = restaurnat;
+            // dish.restaurant = restaurant;
             // await this.dishes.save(dish);
             const dish = await this.dishes.save(
                 {...this.dishes.create(createDishInput), restaurant }
             )
 
-            return {ok : true}
+            console.log(dish);
+
+            return {ok : true,}
         } catch (error) {
             console.log(error);
             return { ok : false, error: "디시를 생성하지 못했습니다." };
