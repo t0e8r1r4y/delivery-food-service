@@ -13,6 +13,7 @@ import { RestaurantsInput, RestaurantsOutput } from "./dtos/restaurants.dto";
 import { RestaurantInput, RestaurantOutput } from  "./dtos/restaurant.dto";
 import { SearchRestaurantInput, SearchRestaurantOutput } from "./dtos/search-restaurant.dto";
 import { CreateDishInput, CreateDishOutput } from "./dtos/create-dish.dto";
+import { Dish } from "./entities/dish.entitiy";
 
 @Injectable()
 export class RestaurantService {
@@ -22,6 +23,8 @@ export class RestaurantService {
         private readonly restaurants: Repository<Restaurant>,
         @InjectRepository(Category)
         private readonly categories: Repository<Category>,
+        @InjectRepository(Dish)
+        private readonly dishes: Repository<Dish>,
     ) {}
 
     /**
@@ -295,8 +298,37 @@ export class RestaurantService {
         owner:User, createDishInput:CreateDishInput
     ) : Promise<CreateDishOutput> {
         try {
-            
-            
+            // 일단 dish가 존재하기 위해서는 레스토랑이 있어야함
+            const restaurant = await this.restaurants.findOne(
+                {
+                    where : {
+                        id : createDishInput.restaurantId,
+                    }
+                }
+            );
+
+            if(!restaurant)
+            {
+                return { ok: false , error: "디시를 추가할 레스토랑을 찾지 못했습니다. "};
+            }
+
+            // 매장 주인 정보 확인
+            if( owner.id !== restaurant.owenrId )
+            {
+                return { ok: false, error: "해당 사용자는 디시를 추가할 권한이 없습니다." };
+            }
+
+            // 매장이 있고 매장 주인 정보를 확인 함
+            // 디시 생성
+            // 아래 코드 보다는
+            // let dish = this.dishes.create(createDishInput);
+            // dish.restaurant = restaurnat;
+            // await this.dishes.save(dish);
+            const dish = await this.dishes.save(
+                {...this.dishes.create(createDishInput), restaurant }
+            )
+
+            return {ok : true}
         } catch (error) {
             console.log(error);
             return { ok : false, error: "디시를 생성하지 못했습니다." };
