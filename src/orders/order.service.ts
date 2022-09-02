@@ -1,12 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Restaurant } from "../restaurants/entities/restaurant.entity";
-import { User } from "../users/entities/user.entity";
+import { User, UserRole } from "../users/entities/user.entity";
 import { Repository } from "typeorm";
 import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
 import { Order } from "./entities/order.entity";
 import { OrderItem } from "./entities/order-item.entity";
 import { Dish } from "../restaurants/entities/dish.entitiy";
+import { GetOrdersInput, GetOrdersOutput } from "./dtos/get-orders.dto";
+import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
 
 @Injectable()
 export class OrderService {
@@ -136,6 +138,103 @@ export class OrderService {
         } catch (error) {
             console.log(error);
             return {ok:false, error:"주문을 생성할 수 없습니다."};
+        }
+    }
+
+    async getOrders (
+        user : User,
+        getOrdersInput : GetOrdersInput,
+    ) : Promise<GetOrdersOutput> {
+        const status = getOrdersInput.status;
+        try {
+            let orders : Order[];
+            switch (user.role) {
+                case UserRole.Client : {
+                    orders = await this.orders.find(
+                        {
+                            where : {
+                                customer : {
+                                    id : user.id,
+                                },
+                                ... ( status && { status } )
+                            }
+                        }
+                    );
+                    break;
+                }
+                case UserRole.Delivery : {
+                    orders = await this.orders.find(
+                        {
+                            where : {
+                                driver : {
+                                    id : user.id,
+                                },
+                                ... ( status && { status } )
+                            }
+                        }
+                    );
+                    break;
+                }
+                case UserRole.Owner : {
+                    const restaurants = await this.restaurants.find(
+                        {
+                            where : {
+                                owner : {
+                                    id : user.id,
+                                }
+                            },
+                            relations: ['orders'],
+                        }
+                    );
+
+                    orders = restaurants.map(restaurants => restaurants.orders).flat(1);
+                    if(status) {
+                        orders = orders.filter(order => order.status === status );
+                    }
+
+                    break;
+                }   
+                default:
+                    break;
+            }
+
+            return { ok: true, orders : orders };
+
+        } catch (error) {
+            console.log(error);
+            return {ok:false, error:"주문을 찾을 수 없습니다."};
+        }
+    }
+
+    async getOrder(
+        user:User, getOrderInput : GetOrderInput
+    ) : Promise<GetOrderOutput> {
+        try {
+            const order = await this.orders.findOne(
+                {
+                    where: {
+                        id : getOrderInput.id,
+                    },
+                    relations : ['restaurant'],
+                }
+            );
+
+            if( !order ) {
+                return { ok: false, error: "주문을 찾을 수 없습니다."};
+            }
+
+            // role에 정의되지 않은 사용자에 대한 예외 처리
+            if( order.customerId !== user.id 
+                && order.driverId !== user.id 
+                && order.restaurant.owenrId !== user.id ) 
+            {
+                return { ok: false, error: "조회할 수 없습니다." };
+            }
+
+            return { ok: true, order };
+
+        } catch (error) {
+            return { ok: false, error: "주문을 찾지 못했습니다." };
         }
     }
 
