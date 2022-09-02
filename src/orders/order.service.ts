@@ -4,11 +4,12 @@ import { Restaurant } from "../restaurants/entities/restaurant.entity";
 import { User, UserRole } from "../users/entities/user.entity";
 import { Repository } from "typeorm";
 import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
-import { Order } from "./entities/order.entity";
+import { Order, OrderStatus } from "./entities/order.entity";
 import { OrderItem } from "./entities/order-item.entity";
 import { Dish } from "../restaurants/entities/dish.entitiy";
 import { GetOrdersInput, GetOrdersOutput } from "./dtos/get-orders.dto";
 import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
+import { EditOrderInput, EditOrderOutput } from "./dtos/edit-order.dto";
 
 @Injectable()
 export class OrderService {
@@ -223,12 +224,8 @@ export class OrderService {
                 return { ok: false, error: "주문을 찾을 수 없습니다."};
             }
 
-            // role에 정의되지 않은 사용자에 대한 예외 처리
-            if( order.customerId !== user.id 
-                && order.driverId !== user.id 
-                && order.restaurant.owenrId !== user.id ) 
-            {
-                return { ok: false, error: "조회할 수 없습니다." };
+            if(!this.canSeeOrder(user, order)) {
+                return {ok: false, error: "사용자 정보가 불일치 합니다."};
             }
 
             return { ok: true, order };
@@ -236,6 +233,80 @@ export class OrderService {
         } catch (error) {
             return { ok: false, error: "주문을 찾지 못했습니다." };
         }
+    }
+
+
+    async editOrder(
+        user: User,
+        editOrderInput : EditOrderInput
+    ) : Promise<EditOrderOutput> {
+        try {
+            const order = await this.orders.findOne(
+                {
+                    where : {
+                        id : editOrderInput.id,
+                    },
+                    relations: ['restaurant'],
+                }
+            )
+
+            if(!order) {
+                return { ok: false, error: "수정할 주문을 찾지 못했습니다. "};
+            }
+
+            if(!this.canSeeOrder(user, order)){
+                return {ok:false, error: "수정할 수 없습니다. "};
+            }
+
+            let canEdit = true;
+            if(user.role === UserRole.Client) {
+                canEdit = false;
+            }
+
+            // 주문을 수정 할 수 있는 사람은 누가 있을까? -> 여기서 상황이 복잡해 진다.
+            if(user.role === UserRole.Owner){
+                // 주인인 경우에 수정이 가능한 경우는
+                if(editOrderInput.status !== OrderStatus.Cooking && editOrderInput.status !== OrderStatus.Cooked) {
+                    canEdit = false;
+                }
+            }
+
+            if(user.role === UserRole.Delivery) {
+                // 배달원의 경우 수정이 가능한 경우는
+                if(editOrderInput.status !== OrderStatus.PickedUp && editOrderInput.status !== OrderStatus.Delivered ) {
+                    canEdit = false;
+                }
+            }
+
+            if(!canEdit) {
+                return {ok:false, error: "수정을 할 수 있는 사람이 아닙니다. "};
+            }
+
+            await this.orders.save([
+                {
+                    id: editOrderInput.id,
+                    status: editOrderInput.status,
+                }
+            ]);
+
+            return {ok:true, };
+        } catch (error) {
+            console.log(error);
+            return {ok:false, error: "주문을 수정 할 수 없습니다."};
+        }
+    }
+
+
+    canSeeOrder(
+        user : User,
+        order : Order
+    ) : boolean {
+        let canSee = true;
+        if(user.role === UserRole.Client && order.customerId !== user.id ) { canSee = false };
+        if(user.role === UserRole.Delivery && order.driverId !== user.id ) { canSee = false };
+        if(user.role === UserRole.Owner && order.restaurant.owenrId !== user.id ) { canSee = false };
+
+        return canSee;
     }
 
 }
