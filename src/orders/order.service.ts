@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Restaurant } from "../restaurants/entities/restaurant.entity";
 import { User, UserRole } from "../users/entities/user.entity";
@@ -10,6 +10,9 @@ import { Dish } from "../restaurants/entities/dish.entitiy";
 import { GetOrdersInput, GetOrdersOutput } from "./dtos/get-orders.dto";
 import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
 import { EditOrderInput, EditOrderOutput } from "./dtos/edit-order.dto";
+import { NEW_COOKED_ORDER, NEW_ORDER_UPDATE, NEW_PENDING_ORDER, PUB_SUB } from "../common/common.constants";
+import { PubSub } from 'graphql-subscriptions';
+import { TakeOrderInput, TakeOrderOutput } from "./dtos/take-order.dto";
 
 @Injectable()
 export class OrderService {
@@ -21,7 +24,8 @@ export class OrderService {
         @InjectRepository(Restaurant)
         private readonly restaurants: Repository<Restaurant>,
         @InjectRepository(Dish)
-        private readonly dishes: Repository<Dish>
+        private readonly dishes: Repository<Dish>,
+        @Inject(PUB_SUB) private readonly pubSub : PubSub,
     ) {}
 
     async createOrder(
@@ -100,7 +104,7 @@ export class OrderService {
                 orderItems.push(orderItem);
             }
 
-            console.log(orderFinalPrice);
+            // console.log(orderFinalPrice);
             // createOrderInput.items.forEach( async item => { // 해당 로직을 사용하면 resolver에서 reteurn을 인지 못함
             //     // console.log(item);
             //     const dish = await this.dishes.findOne({
@@ -134,6 +138,10 @@ export class OrderService {
             if(!order) {
                 return { ok: false, error: "주문을 생성하지 못했습니다. "};
             }
+
+            await this.pubSub.publish(NEW_PENDING_ORDER, {
+                pendingOrder: { order, ownerId: restaurant.owenrId }
+            });
 
             return {ok:true};
         } catch (error) {
@@ -289,10 +297,61 @@ export class OrderService {
                 }
             ]);
 
+            const newOrder = {...order, status : editOrderInput.status };
+            if(user.role === UserRole.Owner) {
+                if( editOrderInput.status === OrderStatus.Cooked ) {
+                    await this.pubSub.publish(NEW_COOKED_ORDER, {
+                        cookedOrders: newOrder,
+                    });
+                }
+            }
+
+            await this.pubSub.publish(NEW_ORDER_UPDATE, {orderUpdates : newOrder})
+
             return {ok:true, };
         } catch (error) {
             console.log(error);
             return {ok:false, error: "주문을 수정 할 수 없습니다."};
+        }
+    }
+
+    async takeOrder (
+        user: User,
+        takeOrderInput :  TakeOrderInput 
+    ) : Promise<TakeOrderOutput> {
+        try {
+            const order = await this.orders.findOne(
+                {
+                    where : {
+                        id: takeOrderInput.id,
+                    }
+                }
+            )
+
+            if(!order) {
+                return { ok: false, error : "주문ㅇ르 찾을 수 없습니다. "};
+            }
+
+            if(order.driver)
+            {
+                return {ok:false, error: "이미 배송 기사가 배정 되었습니다. "};
+            }
+
+            order.driver = user;
+
+            await this.orders.save({
+                id: takeOrderInput.id,
+                driver : order.driver,
+            });
+
+            await this.pubSub.publish(NEW_ORDER_UPDATE, {
+                orderUpdates : { ...order, driver : order.driver },
+            });
+
+            return { ok: true };
+
+        } catch (error) {
+            return {ok:false, error: "주문을 가져올 수 없습니다."};
         }
     }
 
