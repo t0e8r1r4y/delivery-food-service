@@ -1,14 +1,21 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { GqlExecutionContext } from "@nestjs/graphql";
-import { Observable } from "rxjs";
-import { User } from "src/users/entities/user.entity";
+import { JwtService } from "../jwt/jwt.service";
+import { UsersService } from "../users/users.service";
 import { AllowedRoles } from "./role.decorator";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(private readonly reflector : Reflector) {}
-    canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    constructor(
+        private readonly reflector : Reflector,
+        private readonly jwtService : JwtService,
+        private readonly userService : UsersService,
+    ) {}
+    async canActivate(context: ExecutionContext)
+    {
+        console.log(context);
+
         const roles = this.reflector.get<AllowedRoles>('roles', context.getHandler(), );
         
         if(!roles) {
@@ -16,18 +23,36 @@ export class AuthGuard implements CanActivate {
         }
 
         const graphqlContext = GqlExecutionContext.create(context).getContext();
+        const token = graphqlContext.token;
+
+        // console.log(token);
+
+        if(token)
+        {
+            console.log("token!!!!!");
+            const decoded = this.jwtService.verify(token.toString());
+
+            if(typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
+                const { user } = await this.userService.findById(decoded['id']);
+                if(!user) {
+                    return false;
+                }
         
-        const user:User = graphqlContext['user'];
-        
-        if(!user) {
+                graphqlContext['user'] = user;
+
+                if(roles.includes('Any')) {
+                    return true;
+                }
+                
+                return roles.includes(user.role);
+            } else {
+                return false;
+            }
+        } else {
+            console.log("token is not");
             return false;
         }
-
-        if(roles.includes('Any')) {
-            return true;
-        }
-        
-        return roles.includes(user.role);
+    
     }
     
 }

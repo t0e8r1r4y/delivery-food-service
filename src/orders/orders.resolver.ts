@@ -53,8 +53,19 @@ export class OrderResolver {
         return
     }
 
+    // 주문을 업데이트하면 이벤트 발생을 알린다.
+    @Mutation(returns => Boolean)
+    potatoReady() {
+        pubSub.publish('trig', {
+            orderSubscription: 'test ok. I can do it.',
+        });
+        return true;
+    }
+
     @Subscription(returns => String)
-    orderSubscription() {
+    @Role(['Any'])
+    orderSubscription(@AuthUser() user : User) {
+        // console.log(user);
         return pubSub.asyncIterator('trig');
     }
 }

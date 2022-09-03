@@ -1,7 +1,7 @@
-import { ApolloDriver } from '@nestjs/apollo';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { GraphQLModule } from '@nestjs/graphql';
+import {  GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 import { UsersModule } from './users/users.module';
@@ -19,6 +19,7 @@ import { Dish } from './restaurants/entities/dish.entitiy';
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
+import { Context } from "graphql-ws"
 
 @Module({
   imports: [
@@ -65,9 +66,31 @@ import { OrderItem } from './orders/entities/order-item.entity';
       //          https://docs.nestjs.com/graphql/quick-start#async-configuration
       driver: ApolloDriver,
       useFactory: () => ({
+        installSubscriptionHandlers: true, // 이것 자체로 웹소켓을 열게 됨
         autoSchemaFile: true,
-        context: ({req}) => ({user: req['user']}),
-      })
+        subscriptions: {
+          'subscriptions-transport-ws': {
+            onConnect: (connectionParams) => {
+              const token = connectionParams['x-jwt'];
+              return { token };
+            },
+          },
+        },
+        context: ({ req, connection }) => {
+          return {
+            token: req ? req.headers['x-jwt'] : connection.context['x-jwt'],
+          };
+        },
+      }),
+        // context: ({ req}) => {
+        //     if (req){
+        //     return { token: req.headers['x-jwt'] };
+        //     }
+        //   //   }else{
+        //   //   return { token: connection.context['X-JWT'] };
+        //   // }
+        // },
+
     } ),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
@@ -86,12 +109,13 @@ import { OrderItem } from './orders/entities/order-item.entity';
   controllers: [],
   providers: [],
 })
-export class AppModule implements NestModule { // middleware class를 사용하고 싶다면 app.module에 구현
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JwtMiddleware).forRoutes({
-      path:"/graphql",
-      method: RequestMethod.POST,
-    });
-  }
+export class AppModule {}
+// export class AppModule implements NestModule { // middleware class를 사용하고 싶다면 app.module에 구현
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer.apply(JwtMiddleware).forRoutes({
+//       path:"/graphql",
+//       method: RequestMethod.POST,
+//     });
+//   }
   
-}
+// }
