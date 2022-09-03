@@ -9,12 +9,16 @@ import { GetOrdersInput, GetOrdersOutput } from "./dtos/get-orders.dto";
 import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
 import { EditOrderInput, EditOrderOutput } from "./dtos/edit-order.dto";
 import {PubSub} from "graphql-subscriptions";
+import { Inject } from "@nestjs/common";
+import { PUB_SUB } from "../common/common.constants";
 
-const pubSub = new PubSub();
 
 @Resolver(of => Order)
 export class OrderResolver {
-    constructor(private readonly ordersService: OrderService) {}
+    constructor(
+        private readonly ordersService: OrderService,
+        @Inject(PUB_SUB) private readonly pubSub : PubSub,
+    ) {}
 
     @Mutation(returns => CreateOrderOutput)
     @Role(['Client'])
@@ -55,17 +59,34 @@ export class OrderResolver {
 
     // 주문을 업데이트하면 이벤트 발생을 알린다.
     @Mutation(returns => Boolean)
-    potatoReady() {
-        pubSub.publish('trig', {
-            orderSubscription: 'test ok. I can do it.',
+    async potatoReady(
+        @Args('trigId') trigId : number,
+    ) {
+        this.pubSub.publish('trig', {
+            orderSubscription : trigId,
+            // orderSubscription: 'test ok. I can do it.',
         });
         return true;
     }
 
-    @Subscription(returns => String)
+    @Subscription(returns => String, {
+        // 말그대로 걸러준다.
+        filter : (payload, variables) => {
+            // console.log(payload, variables);
+            return payload.orderSubscription === variables.trigId;
+        },
+        // 걸러진 값에서 보여주고 싶은 값으로 변환을 하여 최종적으로 asyncIterator하도록 한다.
+        resolve : (payload, args, context, info) => {
+            console.log(payload);
+            return  `Test ${payload.orderSubscription} is right?`;
+        },
+    })
     @Role(['Any'])
-    orderSubscription(@AuthUser() user : User) {
+    orderSubscription(
+        // @AuthUser() user : User
+        @Args('trigId') trigId : number,
+    ) {
         // console.log(user);
-        return pubSub.asyncIterator('trig');
+        return this.pubSub.asyncIterator('trig');
     }
 }

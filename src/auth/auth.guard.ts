@@ -14,8 +14,6 @@ export class AuthGuard implements CanActivate {
     ) {}
     async canActivate(context: ExecutionContext)
     {
-        console.log(context);
-
         const roles = this.reflector.get<AllowedRoles>('roles', context.getHandler(), );
         
         if(!roles) {
@@ -25,11 +23,8 @@ export class AuthGuard implements CanActivate {
         const graphqlContext = GqlExecutionContext.create(context).getContext();
         const token = graphqlContext.token;
 
-        // console.log(token);
-
         if(token)
         {
-            console.log("token!!!!!");
             const decoded = this.jwtService.verify(token.toString());
 
             if(typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
@@ -49,7 +44,6 @@ export class AuthGuard implements CanActivate {
                 return false;
             }
         } else {
-            console.log("token is not");
             return false;
         }
     
