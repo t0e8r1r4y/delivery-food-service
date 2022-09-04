@@ -1,5 +1,5 @@
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { ApolloDriver } from '@nestjs/apollo';
+import {  Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import {  GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,7 +8,6 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { CommonModule } from './common/common.module';
 import { JwtModule } from './jwt/jwt.module';
-import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
 import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
@@ -19,7 +18,9 @@ import { Dish } from './restaurants/entities/dish.entitiy';
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
-import { Context } from "graphql-ws"
+import { PaymentsModule } from './payments/payments.module';
+import { Payment } from './payments/entities/payment.entity';
+import { ScheduleModule } from '@nestjs/schedule'
 
 @Module({
   imports: [
@@ -57,7 +58,7 @@ import { Context } from "graphql-ws"
       // [옵션] 개발 환경에서 sql을 확인하고 싶을 때
       logging: process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       // entities: [Restaurant],
-      entities: [User, Verification, Restaurant, Category, Dish, Order, OrderItem],
+      entities: [User, Verification, Restaurant, Category, Dish, Order, OrderItem, Payment],
     }),
     GraphQLModule.forRootAsync( {
       // Note : GraphQL의 버전에 따른 이슈입니다.
@@ -92,6 +93,7 @@ import { Context } from "graphql-ws"
         // },
 
     } ),
+    ScheduleModule.forRoot(),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
     }),
@@ -105,6 +107,7 @@ import { Context } from "graphql-ws"
     CommonModule,
     AuthModule,
     OrdersModule,
+    PaymentsModule,
   ],
   controllers: [],
   providers: [],
