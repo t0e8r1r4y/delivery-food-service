@@ -11,6 +11,7 @@ import { VerifyEmailOutput } from "./dtos/verify-email.dto";
 import { UserProfileOutput } from "./dtos/user-profile.dto";
 import { MailService } from "../mail/mail.service";
 import { TryCatch } from "../common/trycatch.decorator";
+import { UserRepository } from "./repositories/user.repository";
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,8 @@ export class UsersService {
         @InjectRepository(Verification) private readonly Verifications: Repository<Verification>,
         private readonly jwtServie: JwtService,
         private readonly mailService: MailService,
+        // test
+        private readonly testUser: UserRepository
     ) {}
 
     @TryCatch('creatAccount method Fail - ')
