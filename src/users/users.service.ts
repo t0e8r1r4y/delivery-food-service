@@ -11,7 +11,6 @@ import { VerifyEmailOutput } from "./dtos/verify-email.dto";
 import { UserProfileOutput } from "./dtos/user-profile.dto";
 import { MailService } from "../mail/mail.service";
 import { TryCatch } from "../common/trycatch.decorator";
-import { UserRepository } from "./repositories/user.repository";
 
 @Injectable()
 export class UsersService {
@@ -21,7 +20,6 @@ export class UsersService {
         private readonly jwtServie: JwtService,
         private readonly mailService: MailService,
         // test
-        private readonly testUser: UserRepository
     ) {}
 
     @TryCatch('creatAccount method Fail - ')
@@ -29,13 +27,15 @@ export class UsersService {
         {email, password, role} : CreateAccountInput
     ) : Promise<CreateAccountOutput> {
 
-        const exists = await this.users.findOne({
-            where : {email},
-        });
+        // const result = await this.testUser.getUserAccountByEmail(email);
+        // console.log(result);
+        // const exists = await this.users.findOne({
+        //     where : {email},
+        // });
 
-        if(exists) {
-            throw new Error('이미 계정이 있습니다.')
-        }
+        // if(exists) {
+        //     throw new Error('이미 계정이 있습니다.')
+        // }
 
         const user = await this.users.save(
             this.users.create({email, password, role}),
