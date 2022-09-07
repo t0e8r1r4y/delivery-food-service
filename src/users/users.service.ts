@@ -10,6 +10,7 @@ import { Verification } from "./entities/verification.entity";
 import { VerifyEmailOutput } from "./dtos/verify-email.dto";
 import { UserProfileOutput } from "./dtos/user-profile.dto";
 import { MailService } from "../mail/mail.service";
+import { TryCatch } from "../common/trycatch.decorator";
 
 @Injectable()
 export class UsersService {
@@ -20,38 +21,60 @@ export class UsersService {
         private readonly mailService: MailService,
     ) {}
 
- 
+    @TryCatch('creatAccount method Fail - ')
     async createAccount( 
         {email, password, role} : CreateAccountInput
     ) : Promise<CreateAccountOutput> {
-        try {
 
-            // [이슈] typeORM 0.3.6 기준으로 where로 명시를 해주어야 함
-            // resource :  https://docs.nestjs.com/techniques/database
-            const exists = await this.users.findOne( {where:{email}} );
+        const exists = await this.users.findOne({
+            where : {email},
+        });
 
-            if(exists) { // 이미 존재
-                return {ok: false, error: '이미 존재하는 사용자입니다.'};
-            }
-
-            const user = await this.users.save(
-                this.users.create({email, password, role}),
-            );
-
-            const verification = await this.Verifications.save(
-                this.Verifications.create({
-                    user,
-                })
-            );
-
-            this.mailService.sendVerificationEmail(user.email, verification.code);
-
-            return { ok: true };
-        } catch (error) {
-            console.log(error);
-            return { ok: false, error: "계정을 생성할 수 없습니다." };
+        if(exists) {
+            throw new Error('이미 계정이 있습니다.')
         }
+
+        const user = await this.users.save(
+            this.users.create({email, password, role}),
+        );
+
+        const  verification = await this.Verifications.save(
+            this.Verifications.create({user}),
+        );
+
+        this.mailService.sendVerificationEmail(user.email, verification.code);
+
+        return { ok: true, }
     }
+
+    // async createAccount( 
+    //     {email, password, role} : CreateAccountInput
+    // ) : Promise<CreateAccountOutput> {
+    //     try {
+    //         const exists = await this.users.findOne( {where:{email}} );
+
+    //         if(exists) { // 이미 존재
+    //             return {ok: false, error: '이미 존재하는 사용자입니다.'};
+    //         }
+
+    //         const user = await this.users.save(
+    //             this.users.create({email, password, role}),
+    //         );
+
+    //         const verification = await this.Verifications.save(
+    //             this.Verifications.create({
+    //                 user,
+    //             })
+    //         );
+
+    //         this.mailService.sendVerificationEmail(user.email, verification.code);
+
+    //         return { ok: true };
+    //     } catch (error) {
+    //         console.log(error);
+    //         return { ok: false, error: "계정을 생성할 수 없습니다." };
+    //     }
+    // }
 
     async login(
         {email, password}: LoginInput

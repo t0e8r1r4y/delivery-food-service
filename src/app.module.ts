@@ -29,9 +29,7 @@ import { ScheduleModule } from '@nestjs/schedule'
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
       ignoreEnvFile: process.env.NODE_ENV === 'prod',
       validationSchema: Joi.object({
-        // 환경변수 유효성 검사
         NODE_ENV: Joi.string().valid('dev', 'prod', 'test').required(),
-        // dev.env 파일에 저장된 값들 유효성 검사
         DB_HOST: Joi.string().required(),
         DB_PORT: Joi.string().required(),
         DB_USERNAME: Joi.string().required(),
@@ -44,30 +42,20 @@ import { ScheduleModule } from '@nestjs/schedule'
       }),
     }),
     TypeOrmModule.forRoot({
-      // todo - need to make 'ormconfig' file -> clear
       type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      // synchronize: true, // 실제 운영 DB와 연동되게 되면 내가 개발했을 때 변경사항이 모조리 반영되어 버림
-      // [중요] 배포, 개발, 실행 환경에 따라서 설정을 여러개 둔다.
       synchronize: process.env.NODE_ENV !== 'prod',
-      // logging: true, // console 
-      // [옵션] 개발 환경에서 sql을 확인하고 싶을 때
       logging: process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      // entities: [Restaurant],
       entities: [User, Verification, Restaurant, Category, Dish, Order, OrderItem, Payment],
     }),
     GraphQLModule.forRootAsync( {
-      // Note : GraphQL의 버전에 따른 이슈입니다.
-      // Version 10. Error [GraphQLModule] Missing "driver" option
-      // source : https://github.com/nestjs/graphql/issues/2004
-      //          https://docs.nestjs.com/graphql/quick-start#async-configuration
       driver: ApolloDriver,
       useFactory: () => ({
-        installSubscriptionHandlers: true, // 이것 자체로 웹소켓을 열게 됨
+        installSubscriptionHandlers: true,
         autoSchemaFile: true,
         subscriptions: {
           'subscriptions-transport-ws': {
@@ -83,15 +71,6 @@ import { ScheduleModule } from '@nestjs/schedule'
           };
         },
       }),
-        // context: ({ req}) => {
-        //     if (req){
-        //     return { token: req.headers['x-jwt'] };
-        //     }
-        //   //   }else{
-        //   //   return { token: connection.context['X-JWT'] };
-        //   // }
-        // },
-
     } ),
     ScheduleModule.forRoot(),
     JwtModule.forRoot({
@@ -113,12 +92,4 @@ import { ScheduleModule } from '@nestjs/schedule'
   providers: [],
 })
 export class AppModule {}
-// export class AppModule implements NestModule { // middleware class를 사용하고 싶다면 app.module에 구현
-//   configure(consumer: MiddlewareConsumer) {
-//     consumer.apply(JwtMiddleware).forRoutes({
-//       path:"/graphql",
-//       method: RequestMethod.POST,
-//     });
-//   }
-  
-// }
+

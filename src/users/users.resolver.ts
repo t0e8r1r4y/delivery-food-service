@@ -9,12 +9,6 @@ import { VerifyEmailInput, VerifyEmailOutput } from "./dtos/verify-email.dto";
 import { User } from "./entities/user.entity";
 import { UsersService } from "./users.service";
 
-// [Refactoring Point ]
-// - Resolver의 영역에서는 인자를 입력 받아 service로 넘겨주는 역할에 집중한다.
-
-// [Todo]
-// - Code convention은 Google ts 적용
-
 @Resolver(of => User)
 export class UsersResolver {
     constructor(
