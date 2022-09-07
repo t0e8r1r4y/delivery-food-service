@@ -3,7 +3,6 @@ import { Repository } from "typeorm";
 import { User } from "../entities/user.entity";
 import { CreateAccountInput } from "../dtos/create-acoount.dto";
 import { TryCatch } from "../../common/trycatch.decorator";
-import { LoginInput } from "../dtos/login.dto";
 import { repositoryResult } from "../dtos/repository-result.dtp";
 
 @CustomRepository(User)

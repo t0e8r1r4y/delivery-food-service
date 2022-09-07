@@ -1,17 +1,12 @@
-import { Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { User } from "./entities/user.entity";
+import { Injectable } from "@nestjs/common";
 import { CreateAccountInput, CreateAccountOutput } from "./dtos/create-acoount.dto";
 import { LoginInput, LoginOutput } from "../users/dtos/login.dto";
 import { JwtService } from "../jwt/jwt.service";
 import { EditProfileInput, EditProfileOutput } from "./dtos/edit-profile.dto";
-import { Verification } from "./entities/verification.entity";
 import { VerifyEmailOutput } from "./dtos/verify-email.dto";
 import { UserProfileOutput } from "./dtos/user-profile.dto";
 import { MailService } from "../mail/mail.service";
 import { TryCatch } from "../common/trycatch.decorator";
-import { UsersResolver } from "./users.resolver";
 import { UserRepository } from "./repository/user.repository";
 import { VerificataionRepository } from "./repository/verification.repository";
 
@@ -28,25 +23,22 @@ export class UsersService {
     async createAccount( 
         {email, password, role} : CreateAccountInput
     ) : Promise<CreateAccountOutput> {
-
+        // 계정 존재 여부 확인
         const result = await this.users.beUserAccountExistByEmail(email);
-        
         if( !result.ok ) {
             throw new Error( result.error );
         }
-
+        // 계정 생성
         const userAccount = await this.users.createAccountAndSave( {email, password, role} );
-        
         if( !userAccount.ok ) {
             throw new Error( userAccount.error );
         }
-
+        // 계정 인증 생성
         const verification = await this.verifications.createAndSaveVerification(userAccount.user);
-
         if( !verification.ok ) {
             throw new Error( verification.error );
         }
-
+        // 인증 메일 발송
         this.mailService.sendVerificationEmail(userAccount.user.email, verification.verification.code );
 
         return { ok: true, }
@@ -75,22 +67,20 @@ export class UsersService {
         return { ok:true, token: token };
     }
  
-    // TODO - 이메일 인증처리 로직 정리가 필요함.
     @TryCatch('editProfile method Fail - ')
     async editProfile( 
         userId : number, { email, password }: EditProfileInput
     ) : Promise<EditProfileOutput>  {
-
+        // 입력 검증
         if( !email && !password ) {
             throw new Error('수정할 내용이 없습니다.');
         }
-
+        // 수정을 할 계정 조회
         const editUserAccount = await this.users.getUserAccountById(userId);
-
         if(!editUserAccount.ok) {
-            throw new Error( editUserAccount.error) ;
+            throw new Error( editUserAccount.error ) ;
         }
-
+        // 이메일이 있으면 이메일 수정
         if(email) {
             editUserAccount.user.email = email;
             editUserAccount.user.verified = false;
@@ -105,13 +95,12 @@ export class UsersService {
 
             this.mailService.sendVerificationEmail(editUserAccount.user.email, verification.verification.code);
         }
-
+        // 비밀번호가 있으면 비번 수정
         if(password) {
             editUserAccount.user.password = password;
         }
-
+        // 수정 내용 저장
         const updatedUserAccount = await this.users.saveUserAccount(editUserAccount.user);
-
         if( !updatedUserAccount.ok ) {
             throw new Error( updatedUserAccount.error) ;
         }
@@ -123,9 +112,8 @@ export class UsersService {
     async findById( 
         id : number 
     ) : Promise<UserProfileOutput> {
-
+        // 사용자 계정 조회
         const userAccount = await this.users.getUserAccountById(id);
-        
         if(!userAccount.ok) {
             throw new Error(userAccount.error);
         }
@@ -137,20 +125,19 @@ export class UsersService {
     async verifyEmail(
         code : string
     ) : Promise<VerifyEmailOutput> {
+        // 인증코드 조회
         const verification = await this.verifications.getVerificationByCode(code);
-
         if(!verification.ok) {
             throw new Error(verification.error);
         }
-
+        // 인증 완료 정보 수정
         verification.verification.user.verified = true;
-        
+        // 인증 완료 정보 수정 저장
         const editUserAccount = await this.users.saveUserAccount(verification.verification.user);
-
         if(!editUserAccount.ok) {
             throw new Error(editUserAccount.error);
         }
-
+        // 해당 인증 삭제
         await this.verifications.deleteVerification(verification.verification.id);
 
         return { ok: true };
