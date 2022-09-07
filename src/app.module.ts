@@ -21,8 +21,6 @@ import { OrderItem } from './orders/entities/order-item.entity';
 import { PaymentsModule } from './payments/payments.module';
 import { Payment } from './payments/entities/payment.entity';
 import { ScheduleModule } from '@nestjs/schedule'
-import { DatabaseModule } from './database/database.module';
-import { TestModule } from './test/test.module';
 
 @Module({
   imports: [
@@ -43,54 +41,53 @@ import { TestModule } from './test/test.module';
         MAILGUN_FROM_EMAIL: Joi.string().required(),
       }),
     }),
-    // TypeOrmModule.forRoot({
-    //   type: 'postgres',
-    //   host: process.env.DB_HOST,
-    //   port: +process.env.DB_PORT,
-    //   username: process.env.DB_USERNAME,
-    //   password: process.env.DB_PASSWORD,
-    //   database: process.env.DB_NAME,
-    //   synchronize: process.env.NODE_ENV !== 'prod',
-    //   logging: process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-    //   entities: [User, Verification, Restaurant, Category, Dish, Order, OrderItem, Payment],
-    // }),
-    // GraphQLModule.forRootAsync( {
-    //   driver: ApolloDriver,
-    //   useFactory: () => ({
-    //     installSubscriptionHandlers: true,
-    //     autoSchemaFile: true,
-    //     subscriptions: {
-    //       'subscriptions-transport-ws': {
-    //         onConnect: (connectionParams) => {
-    //           const token = connectionParams['x-jwt'];
-    //           return { token };
-    //         },
-    //       },
-    //     },
-    //     context: ({ req, connection }) => {
-    //       return {
-    //         token: req ? req.headers['x-jwt'] : connection.context['x-jwt'],
-    //       };
-    //     },
-    //   }),
-    // } ),
-    // ScheduleModule.forRoot(),
-    // JwtModule.forRoot({
-    //   privateKey: process.env.PRIVATE_KEY,
-    // }),
-    // MailModule.forRoot({
-    //   apiKey: process.env.MAILGUN_API_KEY,
-    //   domain:process.env.MAILGUN_DOMAIN_NAME,
-    //   fromEmail: process.env.MAILGUN_FROM_EMAIL
-    // }),
-    // RestaurnatsModule,
-    // UsersModule,
-    // CommonModule,
-    // AuthModule,
-    // OrdersModule,
-    // PaymentsModule,
-    DatabaseModule,
-    TestModule,
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST,
+      port: +process.env.DB_PORT,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      synchronize: process.env.NODE_ENV !== 'prod',
+      logging: process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
+      entities: [User, Verification, Restaurant, Category, Dish, Order, OrderItem, Payment],
+    }),
+    GraphQLModule.forRootAsync( {
+      driver: ApolloDriver,
+      useFactory: () => ({
+        installSubscriptionHandlers: true,
+        autoSchemaFile: true,
+        subscriptions: {
+          'subscriptions-transport-ws': {
+            onConnect: (connectionParams) => {
+              const token = connectionParams['x-jwt'];
+              return { token };
+            },
+          },
+        },
+        context: ({ req, connection }) => {
+          return {
+            token: req ? req.headers['x-jwt'] : connection.context['x-jwt'],
+          };
+        },
+      }),
+    } ),
+    ScheduleModule.forRoot(),
+    JwtModule.forRoot({
+      privateKey: process.env.PRIVATE_KEY,
+    }),
+    MailModule.forRoot({
+      apiKey: process.env.MAILGUN_API_KEY,
+      domain:process.env.MAILGUN_DOMAIN_NAME,
+      fromEmail: process.env.MAILGUN_FROM_EMAIL
+    }),
+    UsersModule,
+    RestaurnatsModule,
+    CommonModule,
+    AuthModule,
+    OrdersModule,
+    PaymentsModule,
+    // TestModule,
   ],
   controllers: [],
   providers: [],

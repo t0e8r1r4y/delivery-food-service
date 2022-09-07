@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
@@ -11,15 +11,17 @@ import { VerifyEmailOutput } from "./dtos/verify-email.dto";
 import { UserProfileOutput } from "./dtos/user-profile.dto";
 import { MailService } from "../mail/mail.service";
 import { TryCatch } from "../common/trycatch.decorator";
+import { UsersResolver } from "./users.resolver";
+import { UserRepository } from "./repository/user.repository";
+import { VerificataionRepository } from "./repository/verification.repository";
 
 @Injectable()
 export class UsersService {
     constructor(
-        @InjectRepository(User) private readonly users: Repository<User>,
-        @InjectRepository(Verification) private readonly Verifications: Repository<Verification>,
         private readonly jwtServie: JwtService,
         private readonly mailService: MailService,
-        // test
+        private readonly users : UserRepository,
+        private readonly verifications : VerificataionRepository,
     ) {}
 
     @TryCatch('creatAccount method Fail - ')
@@ -27,25 +29,25 @@ export class UsersService {
         {email, password, role} : CreateAccountInput
     ) : Promise<CreateAccountOutput> {
 
-        // const result = await this.testUser.getUserAccountByEmail(email);
-        // console.log(result);
-        // const exists = await this.users.findOne({
-        //     where : {email},
-        // });
+        const result = await this.users.beUserAccountExistByEmail(email);
+        
+        if( !result.ok ) {
+            throw new Error( result.error );
+        }
 
-        // if(exists) {
-        //     throw new Error('이미 계정이 있습니다.')
-        // }
+        const userAccount = await this.users.createAccountAndSave( {email, password, role} );
+        
+        if( !userAccount.ok ) {
+            throw new Error( userAccount.error );
+        }
 
-        const user = await this.users.save(
-            this.users.create({email, password, role}),
-        );
+        const verification = await this.verifications.createAndSaveVerification(userAccount.user);
 
-        const  verification = await this.Verifications.save(
-            this.Verifications.create({user}),
-        );
+        if( !verification.ok ) {
+            throw new Error( verification.error );
+        }
 
-        this.mailService.sendVerificationEmail(user.email, verification.code);
+        this.mailService.sendVerificationEmail(userAccount.user.email, verification.verification.code );
 
         return { ok: true, }
     }
@@ -54,29 +56,23 @@ export class UsersService {
     async login(
         {email, password}: LoginInput
     ): Promise<LoginOutput> {
-
-        const user = await this.users.findOne({
-            where : { email },
-            select : ['id', 'password']
-        });
-
-        if(!user) {
-            throw new Error('사용자를 찾을 수 없습니다.');
+        // 사용자 계정을 조회
+        const userAccount = await this.users.getUserAccountByEmail(email);
+        if( !userAccount.ok ) {
+            throw new Error(userAccount.error);
         }
-
-        const isCorrectPassword = await user.checkPassword(password);
-
-        if(!isCorrectPassword) {
+        // 비밀번호 검증
+        const isPasswordCorrect = await userAccount.user.checkPassword(password);
+        if( !isPasswordCorrect ) {
             throw new Error('비밀번호가 틀렸습니다.');
         }
-
-        const token = this.jwtServie.sign(user.id);
-
+        // 토큰 발행
+        const token = this.jwtServie.sign(userAccount.user.id);
         if(!token) {
             throw new Error('토큰을 발행하지 못하였습니다.')
         }
 
-        return {ok:true, token: token};
+        return { ok:true, token: token };
     }
  
     // TODO - 이메일 인증처리 로직 정리가 필요함.
@@ -85,39 +81,40 @@ export class UsersService {
         userId : number, { email, password }: EditProfileInput
     ) : Promise<EditProfileOutput>  {
 
-        if( !email && !password) {
+        if( !email && !password ) {
             throw new Error('수정할 내용이 없습니다.');
         }
 
-        const user = await this.users.findOne({
-            where : {
-                id : userId,
-            }
-        });
+        const editUserAccount = await this.users.getUserAccountById(userId);
 
-        if( !user ) {
-            throw new Error('수정할 사용자를 찾지 못하였습니다.');
+        if(!editUserAccount.ok) {
+            throw new Error( editUserAccount.error) ;
         }
 
         if(email) {
-            user.email = email;
-            user.verified = false;
-            await this.Verifications.delete({
-                user: {
-                    id: user.id,
-                }
-            });
-            const verification = await this.Verifications.save(
-                this.Verifications.create({user}),
-            );
-            this.mailService.sendVerificationEmail(user.email, verification.code);
+            editUserAccount.user.email = email;
+            editUserAccount.user.verified = false;
+
+            await this.verifications.deleteVerification(editUserAccount.user.id);
+
+            const verification = await this.verifications.createAndSaveVerification(editUserAccount.user);
+
+            if(!verification.ok) {
+                throw new Error( verification.error );
+            }
+
+            this.mailService.sendVerificationEmail(editUserAccount.user.email, verification.verification.code);
         }
 
         if(password) {
-            user.password = password;
+            editUserAccount.user.password = password;
         }
 
-        await this.users.save(user);
+        const updatedUserAccount = await this.users.saveUserAccount(editUserAccount.user);
+
+        if( !updatedUserAccount.ok ) {
+            throw new Error( updatedUserAccount.error) ;
+        }
 
         return { ok: true, };
     }
@@ -126,35 +123,38 @@ export class UsersService {
     async findById( 
         id : number 
     ) : Promise<UserProfileOutput> {
-        const user = await this.users.findOne({
-            where : {
-                id: id,
-            }
-        })
 
-        if(!user) {
-            throw new Error(`${id}의 사용자를 찾을 수 없습니다.`);
+        const userAccount = await this.users.getUserAccountById(id);
+        
+        if(!userAccount.ok) {
+            throw new Error(userAccount.error);
         }
 
-        return { ok: true, user: user };
+        return { ok: true, user: userAccount.user };
     }
 
     @TryCatch('verifyEmail method Fail - ')
     async verifyEmail(
-        code:string
+        code : string
     ) : Promise<VerifyEmailOutput> {
-        const verification = await this.Verifications.findOne({
-            where: {code},
-            relations: ['user']
-        });
+        const verification = await this.verifications.getVerificationByCode(code);
 
-        if(!verification) {
-            throw new NotFoundException('인증값을 찾지 못했습니다.');
+        if(!verification.ok) {
+            throw new Error(verification.error);
         }
-        verification.user.verified = true;
-        await this.users.save(verification.user);
-        await this.Verifications.delete(verification.id);
+
+        verification.verification.user.verified = true;
+        
+        const editUserAccount = await this.users.saveUserAccount(verification.verification.user);
+
+        if(!editUserAccount.ok) {
+            throw new Error(editUserAccount.error);
+        }
+
+        await this.verifications.deleteVerification(verification.verification.id);
 
         return { ok: true };
     }
+
+
 }

@@ -4,13 +4,14 @@ import { User } from './entities/user.entity';
 import { UsersService } from './users.service'; 
 import { UsersResolver } from './users.resolver'
 import { Verification } from './entities/verification.entity';
-import { DataSource } from 'typeorm';
-import { DatabaseModule } from '../database/database.module';
-import { userRepository } from './repositories/user.repository';
+import { DataSource, Repository } from 'typeorm';
+import { TypeOrmCustomModule } from '../common/typeorm-ex.module';
+import { UserRepository } from './repository/user.repository';
+import { VerificataionRepository } from './repository/verification.repository';
 
 @Module({
-    imports: [DatabaseModule],
-    providers: [UsersResolver,UsersService, ...userRepository],
+    imports: [TypeOrmCustomModule.forCustomRepository([UserRepository, VerificataionRepository]), TypeOrmModule.forFeature([User, Verification])],
+    providers: [UsersResolver, UsersService],
     exports: [ UsersService ]
 })
 export class UsersModule {}
