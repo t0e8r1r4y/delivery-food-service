@@ -47,66 +47,35 @@ export class UsersService {
         return { ok: true, }
     }
 
-    // async createAccount( 
-    //     {email, password, role} : CreateAccountInput
-    // ) : Promise<CreateAccountOutput> {
-    //     try {
-    //         const exists = await this.users.findOne( {where:{email}} );
-
-    //         if(exists) { // 이미 존재
-    //             return {ok: false, error: '이미 존재하는 사용자입니다.'};
-    //         }
-
-    //         const user = await this.users.save(
-    //             this.users.create({email, password, role}),
-    //         );
-
-    //         const verification = await this.Verifications.save(
-    //             this.Verifications.create({
-    //                 user,
-    //             })
-    //         );
-
-    //         this.mailService.sendVerificationEmail(user.email, verification.code);
-
-    //         return { ok: true };
-    //     } catch (error) {
-    //         console.log(error);
-    //         return { ok: false, error: "계정을 생성할 수 없습니다." };
-    //     }
-    // }
-
+    @TryCatch('login method Fail - ')
     async login(
         {email, password}: LoginInput
     ): Promise<LoginOutput> {
-        try {
-            const user = await this.users.findOne( 
-                { 
-                    where:{email}, 
-                    select:["id","password"] // 처리로직에 필요한 부분을 select 한다.
-                }
-            );
 
-            if(!user) {
-                return { ok: false, error: '사용자를 찾을 수 없습니다.'};
-            }
+        const user = await this.users.findOne({
+            where : { email },
+            select : ['id', 'password']
+        });
 
-            const pwCorrect = await user.checkPassword(password);
-
-            if(!pwCorrect) {
-                return {ok: false, error: '비밀번호가 틀렸습니다.'};
-            }
-
-            const token = this.jwtServie.sign(user.id);
-
-            return {ok: true, token: token};
-        } catch (error) {
-            console.log(error);
-            return { ok: false, error: '로그인을 할 수 없습니다.' };
+        if(!user) {
+            throw new Error('사용자를 찾을 수 없습니다.');
         }
-    }
 
-    
+        const isCorrectPassword = await user.checkPassword(password);
+
+        if(!isCorrectPassword) {
+            throw new Error('비밀번호가 틀렸습니다.');
+        }
+
+        const token = this.jwtServie.sign(user.id);
+
+        if(!token) {
+            throw new Error('토큰을 발행하지 못하였습니다.')
+        }
+
+        return {ok:true, token: token};
+    }
+ 
     
     // userId comming from token
     // 특정 값만 수정하고 싶은데 {email, password} 이런식으로 코드를 작성하면 둘다 들어가야되서 하나는 undefined가 뜨게된다.
