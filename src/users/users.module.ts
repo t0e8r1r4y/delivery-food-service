@@ -9,6 +9,26 @@ import { TypeOrmCustomModule } from '../common/typeorm-ex.module';
 import { UserRepository } from './repository/user.repository';
 import { VerificataionRepository } from './repository/verification.repository';
 import { CqrsModule } from '@nestjs/cqrs';
+import { UserEventsHandler } from './application/event/user-events.handler';
+import { CreateUserHandler } from './application/command/create-user.handler';
+import { UserFactory } from './domain/user.factory';
+
+const commandHandlers = [
+    CreateUserHandler,
+];
+
+const queryHandlers = [
+
+];
+
+const eventHandlers = [
+    UserEventsHandler,
+];
+
+const factories = [
+    UserFactory,
+];
+
 
 @Module({
     imports: [
@@ -16,7 +36,13 @@ import { CqrsModule } from '@nestjs/cqrs';
         TypeOrmModule.forFeature([User, Verification]),
         CqrsModule,
     ],
-    providers: [UsersResolver, UsersService],
+    providers: [
+        UsersResolver, 
+        UsersService,
+        ...eventHandlers,
+        ...commandHandlers,
+        ...factories
+    ],
     exports: [ UsersService ]
 })
 export class UsersModule {}

@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Context } from "@nestjs/graphql";
+import { Resolver, Query, Mutation, Args } from "@nestjs/graphql";
 import { Role } from "../auth/role.decorator";
 import { AuthUser } from "../auth/auth-user.decorator";
 import { CreateAccountInput, CreateAccountOutput } from "./dtos/create-acoount.dto";
@@ -8,25 +8,29 @@ import { UserProfileInput, UserProfileOutput } from "./dtos/user-profile.dto";
 import { VerifyEmailInput, VerifyEmailOutput } from "./dtos/verify-email.dto";
 import { User } from "./entities/user.entity";
 import { UsersService } from "./users.service";
+import { CommandBus } from '@nestjs/cqrs';
+import { CreateUserCommand } from "./application/command/create-user.command";
 
 @Resolver(of => User)
 export class UsersResolver {
     constructor(
-        private readonly usersService: UsersService
+        // private readonly usersService: UsersService, // CQRS 테스트 목적 임시 주석 처리
+        private readonly commandBus : CommandBus,
     ) { }
 
     @Mutation(returns => CreateAccountOutput)
     async createAccount(
         @Args("input") craeteAccountInput : CreateAccountInput
     ): Promise<CreateAccountOutput> {
-        return this.usersService.createAccount(craeteAccountInput);        
+        const command = new CreateUserCommand(craeteAccountInput.email, craeteAccountInput.password, craeteAccountInput.role);
+        return this.commandBus.execute(command); //this.usersService.createAccount(craeteAccountInput);        
     }
 
     @Mutation(returns => LoginOutput)
     async login(
         @Args('input') loginInput: LoginInput
     ): Promise<LoginOutput> {
-        return this.usersService.login(loginInput);
+        return //this.usersService.login(loginInput);
     }
 
     @Query(returns => User)
@@ -41,7 +45,7 @@ export class UsersResolver {
         @AuthUser() authUser: User,
         @Args('input') editProfileInput: EditProfileInput,
     ) : Promise<EditProfileOutput> {
-        return this.usersService.editProfile(authUser.id, editProfileInput);
+        return //this.usersService.editProfile(authUser.id, editProfileInput);
     }
 
     @Role(['Any'])
@@ -49,14 +53,14 @@ export class UsersResolver {
     async userProfile(
         @Args() userProfileInput: UserProfileInput
     ): Promise<UserProfileOutput> {
-        return this.usersService.findById(userProfileInput.userId);
+        return //this.usersService.findById(userProfileInput.userId);
     }
 
     @Mutation(returns => VerifyEmailOutput)
     async verifyEmail(
         @Args('input') { code }: VerifyEmailInput
     ): Promise<VerifyEmailOutput> {
-        return this.usersService.verifyEmail(code);
+        return //this.usersService.verifyEmail(code);
     }
 
 }
