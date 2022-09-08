@@ -4,9 +4,10 @@ import { User } from "../entities/user.entity";
 import { CreateAccountInput } from "../dtos/create-acoount.dto";
 import { TryCatch } from "../../common/trycatch.decorator";
 import { repositoryResult } from "../dtos/repository-result.dtp";
+import { IUserRepository } from "../domain/repository/iuser.repository";
 
 @CustomRepository(User)
-export class UserRepository extends Repository<User> {
+export class UserRepository extends Repository<User> implements IUserRepository {
 
     @TryCatch('Error at getUserAccountByEmail - ')
     async getUserAccountByEmail( email : string ) : Promise<repositoryResult> {
@@ -72,6 +73,5 @@ export class UserRepository extends Repository<User> {
 
         return { ok:true, user:result };
     }
-
     
 }

@@ -5,9 +5,10 @@ import { User } from "../entities/user.entity";
 import { Verification } from "../entities/verification.entity";
 import { TryCatch } from "../../common/trycatch.decorator";
 import { NotFoundException } from "@nestjs/common";
+import { IVerificationRepository } from "../domain/repository/iverification.repository";
 
 @CustomRepository(Verification)
-export class VerificataionRepository extends Repository<Verification> {
+export class VerificataionRepository extends Repository<Verification> implements IVerificationRepository {
 
     @TryCatch('save fail - ')
     async createAndSaveVerification( user : User ) : Promise<verificationRepositoryResult> {
