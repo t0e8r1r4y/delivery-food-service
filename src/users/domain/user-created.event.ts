@@ -7,6 +7,6 @@ export class UserCreateEvent extends CqrsEvent implements IEvent {
         readonly email : string,
         readonly code : string,
     ) {
-        super(UserCreateEvent.name);
+        super( UserCreateEvent.name );
     }
 }
