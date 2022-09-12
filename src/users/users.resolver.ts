@@ -16,7 +16,7 @@ import { GetUserInfoQuery  } from "./application/query/get-user-info.query";
 @Resolver(of => User)
 export class UsersResolver {
     constructor(
-        private readonly usersService: UsersService, // CQRS 테스트 목적 임시 주석 처리
+        private readonly usersService: UsersService,
         private readonly commandBus : CommandBus,
         private readonly queryBus: QueryBus,
     ) { }
@@ -48,7 +48,7 @@ export class UsersResolver {
         @AuthUser() authUser: User,
         @Args('input') editProfileInput: EditProfileInput,
     ) : Promise<EditProfileOutput> {
-        return //this.usersService.editProfile(authUser.id, editProfileInput);
+        return this.usersService.editProfile(authUser.id, editProfileInput);
     }
 
     @Role(['Any'])
@@ -57,14 +57,14 @@ export class UsersResolver {
         @Args() userProfileInput: UserProfileInput
     ): Promise<UserProfileOutput> {
         const getUserInfoQuery = new GetUserInfoQuery(userProfileInput.userId);
-        return this.queryBus.execute(getUserInfoQuery);//this.usersService.findById(userProfileInput.userId);
+        return this.queryBus.execute(getUserInfoQuery); //this.usersService.findById(userProfileInput.userId);
     }
 
     @Mutation(returns => VerifyEmailOutput)
     async verifyEmail(
         @Args('input') { code }: VerifyEmailInput
     ): Promise<VerifyEmailOutput> {
-        return //this.usersService.verifyEmail(code);
+        return this.usersService.verifyEmail(code);
     }
 
 }
