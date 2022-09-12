@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GetUserInfoQuery } from './get-user-info.query';
 import { UserInfo } from '../../../users/interface/UserInfo';
-import { UserRepository } from '../../../users/repository/user.repository';
-import { User } from '../../../users/entities/user.entity';
-import { UserProfileOutput } from '../../../users/dtos/user-profile.dto';
+import { UserRepository } from '../../infra/db/repository/user.repository';
+import { User } from '../../infra/entities/user.entity';
+import { UserProfileOutput } from '../../interface/dtos/user-profile.dto';
 import { TryCatch } from '../../../common/trycatch.decorator';
 
 

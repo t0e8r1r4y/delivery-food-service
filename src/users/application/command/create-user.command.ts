@@ -1,5 +1,5 @@
 import { ICommand } from '@nestjs/cqrs';
-import { UserRole } from 'src/users/entities/user.entity';
+import { UserRole } from 'src/users/infra/entities/user.entity';
 
 export class CreateUserCommand implements ICommand {
     constructor(

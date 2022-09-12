@@ -2,8 +2,8 @@ import { Injectable, UnprocessableEntityException } from "@nestjs/common";
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserFactory } from "../../../users/domain/user.factory";
 import { TryCatch } from "../../../common/trycatch.decorator";
-import { UserRepository } from "../../../users/repository/user.repository";
-import { VerificataionRepository } from "../../../users/repository/verification.repository";
+import { UserRepository } from "../../infra/db/repository/user.repository";
+import { VerificataionRepository } from "../../infra/db/repository/verification.repository";
 import { CreateUserCommand } from "./create-user.command";
 
 @Injectable()

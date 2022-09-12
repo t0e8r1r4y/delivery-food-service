@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Restaurant } from "../restaurants/entities/restaurant.entity";
-import { User, UserRole } from "../users/entities/user.entity";
+import { User, UserRole } from "../users/infra/entities/user.entity";
 import { Repository } from "typeorm";
 import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
 import { Order, OrderStatus } from "./entities/order.entity";

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { EventBus } from '@nestjs/cqrs';
-import { User } from "../entities/user.entity";
+import { User } from "../infra/entities/user.entity";
 import { UserCreateEvent } from "./user-created.event";
 
 @Injectable()

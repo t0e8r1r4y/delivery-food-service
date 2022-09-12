@@ -1,12 +1,12 @@
 import { Resolver, Query, Mutation, Args } from "@nestjs/graphql";
 import { Role } from "../../auth/role.decorator";
 import { AuthUser } from "../../auth/auth-user.decorator";
-import { CreateAccountInput, CreateAccountOutput } from "../dtos/create-acoount.dto";
-import { EditProfileInput, EditProfileOutput } from "../dtos/edit-profile.dto";
-import { LoginOutput, LoginInput } from "../dtos/login.dto";
-import { UserProfileInput, UserProfileOutput } from "../dtos/user-profile.dto";
-import { VerifyEmailInput, VerifyEmailOutput } from "../dtos/verify-email.dto";
-import { User } from "../entities/user.entity";
+import { CreateAccountInput, CreateAccountOutput } from "./dtos/create-acoount.dto";
+import { EditProfileInput, EditProfileOutput } from "./dtos/edit-profile.dto";
+import { LoginOutput, LoginInput } from "./dtos/login.dto";
+import { UserProfileInput, UserProfileOutput } from "./dtos/user-profile.dto";
+import { VerifyEmailInput, VerifyEmailOutput } from "./dtos/verify-email.dto";
+import { User } from "../infra/entities/user.entity";
 import { UsersService } from "../users.service";
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from "../application/command/create-user.command";

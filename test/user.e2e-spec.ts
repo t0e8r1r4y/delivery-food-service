@@ -3,10 +3,10 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { DataSource, Repository } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/users/infra/entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { number } from 'joi';
-import { Verification } from 'src/users/entities/verification.entity';
+import { Verification } from 'src/users/infra/entities/verification.entity';
 
 jest.mock('got', () => {
   return {

@@ -1,7 +1,7 @@
 import { Args, Mutation, Resolver, Query, Subscription } from "@nestjs/graphql";
 import { Role } from "../auth/role.decorator";
 import { AuthUser } from "../auth/auth-user.decorator";
-import { User } from "../users/entities/user.entity";
+import { User } from "../users/infra/entities/user.entity";
 import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
 import { Order } from "./entities/order.entity";
 import { OrderService } from "./order.service";

@@ -1,14 +1,14 @@
 import { Injectable } from "@nestjs/common";
-import { CreateAccountInput, CreateAccountOutput } from "./dtos/create-acoount.dto";
-import { LoginInput, LoginOutput } from "../users/dtos/login.dto";
+import { CreateAccountInput, CreateAccountOutput } from "./interface/dtos/create-acoount.dto";
+import { LoginInput, LoginOutput } from "./interface/dtos/login.dto";
 import { JwtService } from "../jwt/jwt.service";
-import { EditProfileInput, EditProfileOutput } from "./dtos/edit-profile.dto";
-import { VerifyEmailOutput } from "./dtos/verify-email.dto";
-import { UserProfileOutput } from "./dtos/user-profile.dto";
+import { EditProfileInput, EditProfileOutput } from "./interface/dtos/edit-profile.dto";
+import { VerifyEmailOutput } from "./interface/dtos/verify-email.dto";
+import { UserProfileOutput } from "./interface/dtos/user-profile.dto";
 import { MailService } from "../mail/mail.service";
 import { TryCatch } from "../common/trycatch.decorator";
-import { UserRepository } from "./repository/user.repository";
-import { VerificataionRepository } from "./repository/verification.repository";
+import { UserRepository } from "./infra/db/repository/user.repository";
+import { VerificataionRepository } from "./infra/db/repository/verification.repository";
 
 @Injectable()
 export class UsersService {

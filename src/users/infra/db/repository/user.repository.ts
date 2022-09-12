@@ -1,10 +1,10 @@
-import { CustomRepository } from "../../common/typeorm-ex.decorator";
+import { CustomRepository } from "../../../../common/typeorm-ex.decorator";
 import { Repository } from "typeorm";
-import { User } from "../entities/user.entity";
-import { CreateAccountInput } from "../dtos/create-acoount.dto";
-import { TryCatch } from "../../common/trycatch.decorator";
-import { repositoryResult } from "../dtos/repository-result.dtp";
-import { IUserRepository } from "../domain/repository/iuser.repository";
+import { User } from "../../entities/user.entity";
+import { CreateAccountInput } from "../../../interface/dtos/create-acoount.dto";
+import { TryCatch } from "../../../../common/trycatch.decorator";
+import { repositoryResult } from "../../../interface/dtos/repository-result.dtp";
+import { IUserRepository } from "../../../domain/repository/iuser.repository";
 
 @CustomRepository(User)
 export class UserRepository extends Repository<User> implements IUserRepository {

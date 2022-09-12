@@ -1,4 +1,4 @@
-import { UserRole } from "../entities/user.entity";
+import { UserRole } from "../infra/entities/user.entity";
 
 export interface UserInfo {
     id : number,

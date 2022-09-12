@@ -5,8 +5,8 @@ import { string } from "joi";
 import { Repository } from "typeorm";
 import { JwtService } from "../jwt/jwt.service";
 import { MailService } from "../mail/mail.service";
-import { User, UserRole } from "./entities/user.entity";
-import { Verification } from "./entities/verification.entity";
+import { User, UserRole } from "./infra/entities/user.entity";
+import { Verification } from "./infra/entities/verification.entity";
 import { UsersService } from "./users.service";
 
 const mockRepository = () => ({

@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Like, Raw, Repository } from "typeorm";
 import { Restaurant } from "./entities/restaurant.entity";
 import { CreateRestaurantInput, CreateRestaurnatOutput } from "./dtos/create-restaurant.dto";
-import { User } from "src/users/entities/user.entity";
+import { User } from "src/users/infra/entities/user.entity";
 import { EditRestaurantInput, EditRestaurantOutput } from "./dtos/edit-restaurant.dto";
 import { Category } from "./entities/category.entity";
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from "./dtos/delete-restaurant.dto";

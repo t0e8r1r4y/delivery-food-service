@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "../users/entities/user.entity";
+import { User } from "../users/infra/entities/user.entity";
 import { LessThan, Repository } from "typeorm";
 import { CreatePaymentInput, CreatePaymentOutput } from "./dtos/create-payment.dto";
 import { Payment } from "./entities/payment.entity";
