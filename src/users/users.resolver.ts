@@ -10,12 +10,15 @@ import { User } from "./entities/user.entity";
 import { UsersService } from "./users.service";
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from "./application/command/create-user.command";
+import { QueryBus } from '@nestjs/cqrs';
+import { GetUserInfoQuery  } from "./application/query/get-user-info.query";
 
 @Resolver(of => User)
 export class UsersResolver {
     constructor(
-        // private readonly usersService: UsersService, // CQRS 테스트 목적 임시 주석 처리
+        private readonly usersService: UsersService, // CQRS 테스트 목적 임시 주석 처리
         private readonly commandBus : CommandBus,
+        private readonly queryBus: QueryBus,
     ) { }
 
     @Mutation(returns => CreateAccountOutput)
@@ -30,7 +33,7 @@ export class UsersResolver {
     async login(
         @Args('input') loginInput: LoginInput
     ): Promise<LoginOutput> {
-        return //this.usersService.login(loginInput);
+        return this.usersService.login(loginInput);
     }
 
     @Query(returns => User)
@@ -53,7 +56,8 @@ export class UsersResolver {
     async userProfile(
         @Args() userProfileInput: UserProfileInput
     ): Promise<UserProfileOutput> {
-        return //this.usersService.findById(userProfileInput.userId);
+        const getUserInfoQuery = new GetUserInfoQuery(userProfileInput.userId);
+        return this.queryBus.execute(getUserInfoQuery);//this.usersService.findById(userProfileInput.userId);
     }
 
     @Mutation(returns => VerifyEmailOutput)

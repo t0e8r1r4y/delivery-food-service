@@ -12,13 +12,14 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { UserEventsHandler } from './application/event/user-events.handler';
 import { CreateUserHandler } from './application/command/create-user.handler';
 import { UserFactory } from './domain/user.factory';
+import { GetUserInfoQueryHandler } from './application/query/get-user-info.handler';
 
 const commandHandlers = [
     CreateUserHandler,
 ];
 
 const queryHandlers = [
-
+    GetUserInfoQueryHandler,
 ];
 
 const eventHandlers = [
@@ -41,7 +42,8 @@ const factories = [
         UsersService,
         ...eventHandlers,
         ...commandHandlers,
-        ...factories
+        ...factories,
+        ...queryHandlers
     ],
     exports: [ UsersService ]
 })
