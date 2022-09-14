@@ -13,6 +13,7 @@ import { UserFactory } from './domain/user.factory';
 import { GetUserInfoQueryHandler } from './application/query/get-user-info.handler';
 import { LoginUserHandler } from './application/command/login-user.handler';
 import { EditUserHandler } from './application/command/edit-user.handler';
+import { EmailService } from './infra/adapter/email.service';
 
 const commandHandlers = [
     CreateUserHandler,
@@ -34,6 +35,7 @@ const factories = [
 
 const repositories = [
     { provide: 'UserRepository', useClass: UserRepository },
+    { provide: 'EmailService', useClass: EmailService },
 ];
 
 

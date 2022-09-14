@@ -3,25 +3,33 @@ import * as FormData from 'form-data' // https://github.com/form-data/form-data/
 import { Inject, Injectable } from "@nestjs/common";
 import { CONFIG_OPTIONS } from "../common/common.constants";
 import { EmailVar, MailModuleOptions } from "./mail.interfaces";
-import { response } from "express";
 
 @Injectable()
 export class MailService {
     constructor(
         @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions
-    ) {
-        // this.sendEmail('test','testing');
-    }
+    ) {}
 
 
     sendVerificationEmail(email: string, code:string) {
         this.sendEmail('Verify Your Email', 'test', [
-            {key: 'code', value: code },
-            {key: 'username', value: email }
+            { key: 'code', value: code },
+            { key: 'username', value: email }
         ]);
     }
 
-    // private async sendEmail( subject : string, template : string, eamilVars : EmailVar[] ) {
+    /**
+     * 메일건에서 사용하는 입력양식입니다. 아래 내용에 맞추어 post 코드를 작성
+     * 
+     * 'YXBpOllPVVJfQVBJX0tFWQ=='
+     * curl -s --user 'api:YOUR_API_KEY' \
+	 * https://api.mailgun.net/v3/YOUR_DOMAIN_NAME/messages \
+	 * -F from='Excited User <mailgun@YOUR_DOMAIN_NAME>' \
+	 * -F to=YOU@YOUR_DOMAIN_NAME \
+	 * -F to=bar@example.com \
+	 * -F subject='Hello' \
+	 * -F text='Testing some Mailgun awesomeness!'
+     */
     async sendEmail( 
         subject : string, template : string, eamilVars : EmailVar[] 
     ) : Promise<Boolean> {
@@ -50,12 +58,3 @@ export class MailService {
     }
 }
 
-// 'YXBpOllPVVJfQVBJX0tFWQ=='
-
-// curl -s --user 'api:YOUR_API_KEY' \
-// 	https://api.mailgun.net/v3/YOUR_DOMAIN_NAME/messages \
-// 	-F from='Excited User <mailgun@YOUR_DOMAIN_NAME>' \
-// 	-F to=YOU@YOUR_DOMAIN_NAME \
-// 	-F to=bar@example.com \
-// 	-F subject='Hello' \
-// 	-F text='Testing some Mailgun awesomeness!'
