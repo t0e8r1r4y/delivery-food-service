@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Like, Raw, Repository } from "typeorm";
 import { Restaurant } from "./entities/restaurant.entity";
 import { CreateRestaurantInput, CreateRestaurnatOutput } from "./dtos/create-restaurant.dto";
-import { User } from "src/users/infra/entities/user.entity";
+import { UserEntity } from "src/users/infra/db/entities/user.entity";
 import { EditRestaurantInput, EditRestaurantOutput } from "./dtos/edit-restaurant.dto";
 import { Category } from "./entities/category.entity";
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from "./dtos/delete-restaurant.dto";
@@ -44,7 +44,7 @@ export class RestaurantService {
     }
 
     async createRestaurnat( 
-        owner : User,
+        owner : UserEntity,
         createRestaurantInput : CreateRestaurantInput 
     ) : Promise<CreateRestaurnatOutput> {
         try {
@@ -64,7 +64,7 @@ export class RestaurantService {
     }
 
    async editRestaurant( 
-        owner: User, 
+        owner: UserEntity, 
         editRestaurantInput: EditRestaurantInput
     ) : Promise<EditRestaurantOutput> {
         try {
@@ -121,7 +121,7 @@ export class RestaurantService {
     
     // Todo - Refactoring할 때 로직에서 중복되는 내용들 정리
     async deleteRestaurant( 
-        owner: User,
+        owner: UserEntity,
         deleteRestaurantIntput : DeleteRestaurantInput,
     ) : Promise<DeleteRestaurantOutput> {
         try {
@@ -303,7 +303,7 @@ export class RestaurantService {
     }
 
     async createDish(
-        owner:User, createDishInput:CreateDishInput
+        owner:UserEntity, createDishInput:CreateDishInput
     ) : Promise<CreateDishOutput> {
         try {
 
@@ -348,7 +348,7 @@ export class RestaurantService {
     }
 
     async editDish(
-        owner : User,
+        owner : UserEntity,
         editDishInput : EditDishInput,
     ) : Promise<EditDishOutput> {
         try {
@@ -384,7 +384,7 @@ export class RestaurantService {
     }
 
     async deleteDish(
-        owner : User,
+        owner : UserEntity,
         deleteDishInput : DeleteDishInput,
     ) : Promise<DeleteDishOutput> {
         try {

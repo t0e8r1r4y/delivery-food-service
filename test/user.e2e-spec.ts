@@ -3,10 +3,10 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { DataSource, Repository } from 'typeorm';
-import { User } from 'src/users/infra/entities/user.entity';
+import { UserEntity } from 'src/users/infra/db/entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { number } from 'joi';
-import { Verification } from 'src/users/infra/entities/verification.entity';
+import { Verification } from 'src/users/infra/db/entities/verification.entity';
 
 jest.mock('got', () => {
   return {
@@ -70,7 +70,7 @@ const testQuery = {
 // 테스트가 진행되는 코드입니다.
 describe('UserModule (e2e)', () => {
   let app : INestApplication;
-  let userRepository : Repository<User>
+  let userRepository : Repository<UserEntity>
   let verificationRepository : Repository<Verification>
   let jwtToken : string;
 
@@ -81,7 +81,7 @@ describe('UserModule (e2e)', () => {
     }).compile();
 
     app = module.createNestApplication();
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    userRepository = module.get<Repository<UserEntity>>(getRepositoryToken(UserEntity));
     verificationRepository = module.get<Repository<Verification>>(getRepositoryToken(Verification));
     await app.init();
   });

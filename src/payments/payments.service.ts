@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "../users/infra/entities/user.entity";
+import { UserEntity } from "../users/infra/db/entities/user.entity";
 import { LessThan, Repository } from "typeorm";
 import { CreatePaymentInput, CreatePaymentOutput } from "./dtos/create-payment.dto";
 import { Payment } from "./entities/payment.entity";
@@ -18,7 +18,7 @@ export class PaymentService {
     ) {}
 
     async createPayment (
-        owner : User,
+        owner : UserEntity,
         createPaymentInput : CreatePaymentInput
     ) : Promise<CreatePaymentOutput> {
         try {
@@ -61,7 +61,7 @@ export class PaymentService {
     }
 
     async getPayments(
-        user: User
+        user: UserEntity
     ) : Promise<GetPaymentOutput> {
         try {
 

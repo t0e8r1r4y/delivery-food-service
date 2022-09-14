@@ -3,7 +3,7 @@ import { Restaurant } from "./entities/restaurant.entity";
 import { CreateRestaurantInput, CreateRestaurnatOutput } from "./dtos/create-restaurant.dto"
 import { RestaurantService } from "./restaurants.service";
 import { AuthUser } from "../auth/auth-user.decorator";
-import { User } from "../users/infra/entities/user.entity";
+import { UserEntity } from "../users/infra/db/entities/user.entity";
 import { Role } from "../auth/role.decorator";
 import { EditRestaurantInput, EditRestaurantOutput } from "./dtos/edit-restaurant.dto";
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from "./dtos/delete-restaurant.dto";
@@ -31,7 +31,7 @@ export class RestaurantResolver {
     @Mutation(returns => CreateRestaurnatOutput)
     @Role(['Owner'])
     async createRestaurant(
-        @AuthUser() authUser: User,
+        @AuthUser() authUser: UserEntity,
         @Args('input') CreateRestaurantInput : CreateRestaurantInput
     ) : Promise<CreateRestaurnatOutput> {
         return this.restaurnatService.createRestaurnat(
@@ -43,7 +43,7 @@ export class RestaurantResolver {
     @Mutation(returns => EditRestaurantOutput)
     @Role(['Owner'])
     async editRestaurant(
-        @AuthUser() authUser : User,
+        @AuthUser() authUser : UserEntity,
         @Args('input') editRestaurantInput: EditRestaurantInput
     ) : Promise<EditRestaurantOutput> {
         return this.restaurnatService.editRestaurant(authUser, editRestaurantInput);
@@ -52,7 +52,7 @@ export class RestaurantResolver {
     @Mutation(returns => DeleteRestaurantOutput)
     @Role(['Owner'])
     async deleteRestaurant(
-        @AuthUser() owner : User,
+        @AuthUser() owner : UserEntity,
         @Args('input') deleteRestaurantInput: DeleteRestaurantInput 
     ) : Promise<DeleteRestaurantOutput> {
         return this.restaurnatService.deleteRestaurant( owner, deleteRestaurantInput );
@@ -119,7 +119,7 @@ export class DishResolver {
     @Mutation(type => CreateDishOutput)
     @Role(['Owner'])
     async createDish(
-        @AuthUser() owner: User,
+        @AuthUser() owner: UserEntity,
         @Args('input') createDishInput : CreateDishInput
     ) : Promise<CreateDishOutput> {
         return this.restaurantService.createDish(owner, createDishInput);
@@ -128,7 +128,7 @@ export class DishResolver {
     @Mutation(type => EditDishOutput)
     @Role(['Owner'])
     async editDish(
-        @AuthUser() owner : User,
+        @AuthUser() owner : UserEntity,
         @Args('input') editDishInput : EditDishInput
     ) : Promise<EditDishOutput> {
         return this.restaurantService.editDish(owner, editDishInput);
@@ -137,7 +137,7 @@ export class DishResolver {
     @Mutation(type => DeleteDishOutput)
     @Role(['Owner'])
     async deleteDish(
-        @AuthUser() owner : User,
+        @AuthUser() owner : UserEntity,
         @Args('input') deleteDishInput : DeleteDishInput
     ) : Promise<DeleteDishOutput> {
         return this.restaurantService.deleteDish(owner, deleteDishInput);

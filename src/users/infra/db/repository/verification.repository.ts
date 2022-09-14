@@ -1,9 +1,9 @@
 import { CustomRepository } from "../../../../common/typeorm-ex.decorator";
 import { Repository } from "typeorm";
-import { verificationRepositoryResult } from "../../../interface/dtos/repository-result.dtp";
-import { User } from "../../entities/user.entity";
-import { Verification } from "../../entities/verification.entity";
-import { TryCatch } from "../../../../common/trycatch.decorator";
+import { verificationRepositoryResult } from "../../../interface/dtos/repository-result.dto";
+import { UserEntity } from "../entities/user.entity";
+import { Verification } from "../entities/verification.entity";
+import { TryCatch } from "../../../../common/decorator/trycatch.decorator";
 import { NotFoundException } from "@nestjs/common";
 import { IVerificationRepository } from "../../../domain/repository/iverification.repository";
 
@@ -11,17 +11,21 @@ import { IVerificationRepository } from "../../../domain/repository/iverificatio
 export class VerificataionRepository extends Repository<Verification> implements IVerificationRepository {
 
     @TryCatch('save fail - ')
-    async createAndSaveVerification( user : User ) : Promise<verificationRepositoryResult> {
-        const verification = await this.save(
-            this.create({
-                user: user
-            }),
+    async createAndSaveVerification( user : UserEntity ) : Promise<verificationRepositoryResult> {
+        const verify = this.create({
+            user : {
+                id: user.id
+            }
+        });
+        const queryRunner = this.manager.connection.createQueryRunner();
+        const verification = await queryRunner.connection.transaction<Verification>(
+           async manager => {
+            return await manager.save(verify);
+           }
         )
-
         if(!verification) {
             throw new Error('인증 생성 후 저장 실패');
         }
-
         return { ok:true, verification: verification };
     }
 

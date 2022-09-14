@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
-import { getDataSourceToken, getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './infra/entities/user.entity';
-import { UsersService } from './users.service'; 
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserEntity } from './infra/db/entities/user.entity';
 import { UsersResolver } from './interface/users.resolver'
-import { Verification } from './infra/entities/verification.entity';
-import { DataSource, Repository } from 'typeorm';
+import { Verification } from './infra/db/entities/verification.entity';
 import { TypeOrmCustomModule } from '../common/typeorm-ex.module';
 import { UserRepository } from './infra/db/repository/user.repository';
 import { VerificataionRepository } from './infra/db/repository/verification.repository';
@@ -13,9 +11,13 @@ import { UserEventsHandler } from './application/event/user-events.handler';
 import { CreateUserHandler } from './application/command/create-user.handler';
 import { UserFactory } from './domain/user.factory';
 import { GetUserInfoQueryHandler } from './application/query/get-user-info.handler';
+import { LoginUserHandler } from './application/command/login-user.handler';
+import { EditUserHandler } from './application/command/edit-user.handler';
 
 const commandHandlers = [
     CreateUserHandler,
+    LoginUserHandler,
+    EditUserHandler,
 ];
 
 const queryHandlers = [
@@ -30,21 +32,26 @@ const factories = [
     UserFactory,
 ];
 
+const repositories = [
+    { provide: 'UserRepository', useClass: UserRepository },
+];
+
 
 @Module({
     imports: [
-        TypeOrmCustomModule.forCustomRepository([UserRepository, VerificataionRepository]), 
-        TypeOrmModule.forFeature([User, Verification]),
+        TypeOrmCustomModule.forCustomRepository([ VerificataionRepository]), // UserRepository
+        TypeOrmModule.forFeature([UserEntity, Verification]),
         CqrsModule,
     ],
     providers: [
         UsersResolver, 
-        UsersService,
+        UserRepository,
         ...eventHandlers,
         ...commandHandlers,
         ...factories,
-        ...queryHandlers
+        ...queryHandlers,
+        ...repositories,
     ],
-    exports: [ UsersService ]
+    exports: [  ]
 })
 export class UsersModule {}

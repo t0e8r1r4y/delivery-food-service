@@ -1,24 +1,14 @@
-export class UserDomain {
+import { UserRole } from "../infra/db/entities/user.entity";
+
+export class User {
+
     constructor(
+        readonly id : number,
         readonly email : string,
         readonly password : string,
-        readonly role : string,
+        readonly userRole : UserRole,
         readonly verified : boolean,
+        readonly createdAt : Date,
+        readonly updatedAt : Date,
     ) {}
-
-    getEmail() : Readonly<string> {
-        return this.email;
-    }
-
-    getPassword() : Readonly<string> {
-        return this.password;
-    }
-
-    getRole() : Readonly<string> {
-        return this.role;
-    }
-
-    getVerified() : Readonly<boolean> {
-        return this.verified;
-    }
 }

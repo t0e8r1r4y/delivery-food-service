@@ -5,11 +5,11 @@ import {  GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 import { UsersModule } from './users/users.module';
-import { User } from './users/infra/entities/user.entity';
+import { UserEntity } from './users/infra/db/entities/user.entity';
 import { CommonModule } from './common/common.module';
 import { JwtModule } from './jwt/jwt.module';
 import { AuthModule } from './auth/auth.module';
-import { Verification } from './users/infra/entities/verification.entity';
+import { Verification } from './users/infra/db/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { Category } from './restaurants/entities/category.entity';
@@ -21,6 +21,9 @@ import { OrderItem } from './orders/entities/order-item.entity';
 import { PaymentsModule } from './payments/payments.module';
 import { Payment } from './payments/entities/payment.entity';
 import { ScheduleModule } from '@nestjs/schedule'
+import { HeadthCheckController } from './headth-check/headth-check.controller';
+import { TerminusModule } from '@nestjs/terminus';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
@@ -50,7 +53,7 @@ import { ScheduleModule } from '@nestjs/schedule'
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [User, Verification, Restaurant, Category, Dish, Order, OrderItem, Payment],
+      entities: [UserEntity, Verification, Restaurant, Category, Dish, Order, OrderItem, Payment],
     }),
     GraphQLModule.forRootAsync( {
       driver: ApolloDriver,
@@ -87,9 +90,10 @@ import { ScheduleModule } from '@nestjs/schedule'
     AuthModule,
     OrdersModule,
     PaymentsModule,
-    // TestModule,
+    TerminusModule,
+    
   ],
-  controllers: [],
+  controllers: [HeadthCheckController],
   providers: [],
 })
 export class AppModule {}

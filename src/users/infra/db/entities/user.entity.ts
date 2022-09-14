@@ -1,12 +1,12 @@
-import { CoreEntity } from "../../../common/entities/core.entity"
+import { CoreEntity } from "../../../../common/entities/core.entity"
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from "typeorm";
 import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
 import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from "@nestjs/common";
 import { IsBoolean, IsEmail, IsEnum, IsString } from "class-validator";
-import { Restaurant } from "../../../restaurants/entities/restaurant.entity";
-import { Order } from "../../../orders/entities/order.entity";
-import { Payment } from "../../../payments/entities/payment.entity";
+import { Restaurant } from "../../../../restaurants/entities/restaurant.entity";
+import { Order } from "../../../../orders/entities/order.entity";
+import { Payment } from "../../../../payments/entities/payment.entity";
 
 export enum UserRole {
     Client = 'Client',
@@ -16,10 +16,10 @@ export enum UserRole {
 
 registerEnumType( UserRole, { name:'UserRole'} );
 
-@InputType( 'UserInputType' ,{isAbstract: true})
+@InputType( 'UserInputType' ,{isAbstract: true} )
 @ObjectType()
-@Entity()
-export class User extends CoreEntity {
+@Entity('user')
+export class UserEntity extends CoreEntity {
     @Column({unique: true})
     @Field(type => String)
     @IsEmail()

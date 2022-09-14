@@ -3,10 +3,10 @@ import { getRepositoryToken } from "@nestjs/typeorm";
 import exp from "constants";
 import { string } from "joi";
 import { Repository } from "typeorm";
-import { JwtService } from "../jwt/jwt.service";
-import { MailService } from "../mail/mail.service";
-import { User, UserRole } from "./infra/entities/user.entity";
-import { Verification } from "./infra/entities/verification.entity";
+import { JwtService } from "../../jwt/jwt.service";
+import { MailService } from "../../mail/mail.service";
+import { UserEntity, UserRole } from "../infra/db/entities/user.entity";
+import { Verification } from "../infra/db/entities/verification.entity";
 import { UsersService } from "./users.service";
 
 const mockRepository = () => ({
@@ -31,7 +31,7 @@ type MockRepository<T = any> = Partial< Record< keyof Repository<T>, jest.Mock >
 describe("UserService", () => {
 
     let service: UsersService;
-    let usersRepository: MockRepository<User>;
+    let usersRepository: MockRepository<UserEntity>;
     let verificationsRepository: MockRepository<Verification>;
     let mailService: MailService;
     let jwtService: JwtService;
@@ -41,7 +41,7 @@ describe("UserService", () => {
             providers: [
                 UsersService, 
                 {
-                    provide: getRepositoryToken(User), 
+                    provide: getRepositoryToken(UserEntity), 
                     useValue: mockRepository()
                 },
                 {
@@ -61,7 +61,7 @@ describe("UserService", () => {
         service = modules.get<UsersService>(UsersService);
         mailService = modules.get<MailService>(MailService);
         jwtService = modules.get<JwtService>(JwtService);
-        usersRepository = modules.get(getRepositoryToken(User));
+        usersRepository = modules.get(getRepositoryToken(UserEntity));
         verificationsRepository = modules.get(getRepositoryToken(Verification));
     })
 

@@ -1,7 +1,7 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { CoreEntity } from '../../common/entities/core.entity';
 import { Restaurant } from '../../restaurants/entities/restaurant.entity';
-import { User } from '../../users/infra/entities/user.entity';
+import { UserEntity } from '../../users/infra/db/entities/user.entity';
 import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 
 @InputType('PaymentInputType', { isAbstract: true })
@@ -12,12 +12,12 @@ export class Payment extends CoreEntity {
   @Column()
   transactionId: string;
 
-  @Field(type => User)
+  @Field(type => UserEntity)
   @ManyToOne(
-    type => User,
+    type => UserEntity,
     user => user.payments,
   )
-  user: User;
+  user: UserEntity;
 
   @RelationId((payment: Payment) => payment.user)
   userId: number;

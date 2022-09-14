@@ -13,7 +13,6 @@ export class UserEventsHandler implements IEventHandler<UserCreateEvent> {
         switch (event.name) {
             case UserCreateEvent.name: {
                 const { email, code } = event as UserCreateEvent;
-                console.log(email, code);
                 this.mailService.sendVerificationEmail( email, code );
                 break;
             }
