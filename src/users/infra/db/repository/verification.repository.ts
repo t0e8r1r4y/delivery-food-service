@@ -1,5 +1,5 @@
 import { CustomRepository } from "../../../../common/typeorm-ex.decorator";
-import { Repository } from "typeorm";
+import { EntityManager, Repository } from "typeorm";
 import { verificationRepositoryResult } from "../../../interface/dtos/repository-result.dto";
 import { UserEntity } from "../entities/user.entity";
 import { Verification } from "../entities/verification.entity";
@@ -10,24 +10,77 @@ import { IVerificationRepository } from "../../../domain/repository/iverificatio
 @CustomRepository(Verification)
 export class VerificataionRepository extends Repository<Verification> implements IVerificationRepository {
 
-    @TryCatch('save fail - ')
-    async createAndSaveVerification( user : UserEntity ) : Promise<verificationRepositoryResult> {
+
+    @TryCatch('Fail to create Verify instance - ')
+    async createVerification(
+        user: UserEntity
+    ) : Promise<verificationRepositoryResult> {
         const verify = this.create({
             user : {
                 id: user.id
             }
         });
-        const queryRunner = this.manager.connection.createQueryRunner();
-        const verification = await queryRunner.connection.transaction<Verification>(
-           async manager => {
-            return await manager.save(verify);
-           }
-        )
-        if(!verification) {
-            throw new Error('인증 생성 후 저장 실패');
+        if(!verify) {
+            throw new Error('인증 정보를 정상 생성하지 못했습니다.');
         }
-        return { ok:true, verification: verification };
+        return {ok: true, verification: verify};
     }
+
+    async saveVerification (
+        verify: Verification
+    ) : Promise<verificationRepositoryResult> {
+        let isResult : verificationRepositoryResult = {ok:false, };
+        const queryRunner = await this.manager.connection.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            await queryRunner.manager.save(verify);
+        } catch (error) {
+            isResult.error = error;
+        } finally {
+            await queryRunner.release();
+            isResult.ok = true;
+            isResult.verification = verify;
+        }
+
+        return isResult;
+    }
+
+    async commitTransaction() : Promise<verificationRepositoryResult> {
+        let isResult : verificationRepositoryResult = {ok:false, };
+        const queryRunner = await this.manager.connection.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            await queryRunner.commitTransaction();
+        } catch (error) {
+            isResult.error = error;
+        } finally {
+            await queryRunner.release();
+            isResult.ok = true;
+        }
+        return isResult;
+    }
+
+    async rollbackTransaction() : Promise<verificationRepositoryResult> {
+        let isResult : verificationRepositoryResult = {ok:false, };
+        const queryRunner = await this.manager.connection.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            await queryRunner.rollbackTransaction();
+        } catch (error) {
+            isResult.error = error;
+        } finally {
+            await queryRunner.release();
+            isResult.ok = true;
+        }
+        return isResult;
+    }
+
 
     @TryCatch('delete fail - ')
     async deleteVerification( id : number ) : Promise<void> {

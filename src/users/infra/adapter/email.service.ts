@@ -9,7 +9,7 @@ export class EmailService implements IEmailService {
         private emailService: ExternalEmailService,
     ) {}
 
-    async sendUserAccountJoinVerification(email: any, code: any) : Promise<void> {
+    async sendUserAccountJoinVerification(email: string, code: string) : Promise<void> {
         this.emailService.sendVerificationEmail(email, code);
     }
 }

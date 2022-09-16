@@ -61,10 +61,38 @@ describe('UserFactory Test Code', () => {
         );
 
         // Expect
-        expect(expected).toBe(user);
+        expect(expected).toEqual(user);
         expect(eventBus.publish).toBeCalledTimes(1);
         
     });
 
-    it.todo('reconstitute');
+    it('reconstitute', () => {
+        // Given
+
+        // When
+        const user = userFactory.reconstitute(
+            1,
+            'test@naver.com',
+            '123123123',
+            UserRole.Client,
+            false,
+            date,
+            date,
+        );
+
+        // Then
+        const expected = new User(
+            1,
+            'test@naver.com',
+            '123123123',
+            UserRole.Client,
+            false,
+            date,
+            date,
+        );
+
+        // Expect
+        expect(expected).toEqual(user);
+        expect(eventBus.publish).toBeCalledTimes(1);        
+    });
 })

@@ -35,7 +35,7 @@ export class UserRepository implements IUserRepository {
             case 'number' : {
                 user = await this.userRepository.findOne({
                     where : {id : key},
-                    select : ['id', 'email', 'password']
+                    select : [ 'id', 'email', 'password' ]
                 })
                 break;
             }
@@ -72,16 +72,69 @@ export class UserRepository implements IUserRepository {
         return { ok : true, user: user }
     }
 
-    @TryCatch('Fail to save UserEntity - ')
-    async saveUserAccount (
-        user: UserEntity
+    async saveUserAccount( 
+        user: UserEntity 
     ) : Promise<repositoryResult> {
+        let isResult : repositoryResult = { ok: false, };
+
         const queryRunner = await this.connection.createQueryRunner();
-        await queryRunner.connection.transaction(
-            "REPEATABLE READ", 
-            async manager => { await manager.save( user );
-        })
-        return { ok:true, };
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            await queryRunner.manager.save(user);
+        } catch (error) {
+            isResult.ok = false;
+            isResult.error = error;
+        } finally {
+            await queryRunner.release()
+            isResult.ok = true;
+            isResult.user = user;
+        }
+
+        return isResult;
+    }
+
+    async commitTransaction() 
+    : Promise<repositoryResult> {
+        let isResult : repositoryResult = {ok:false};
+
+        const queryRunner = await this.connection.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            await queryRunner.commitTransaction();
+        } catch (error) {
+            isResult.ok = false;
+            isResult.error = error;
+        } finally {
+            await queryRunner.release()
+            isResult.ok = true;
+        }
+
+
+        return isResult;
+    }
+
+    async rollbackTransaction() : Promise<repositoryResult> {
+        let isResult : repositoryResult = {ok:false};;
+
+        const queryRunner = await this.connection.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            await queryRunner.rollbackTransaction();
+        } catch (error) {
+            isResult.ok = false;
+            isResult.error = error;
+        } finally {
+            await queryRunner.release()
+            isResult.ok = true;
+        }
+
+        return isResult;
     }
 
     @TryCatch('Fail to delete UserAccount - ')

@@ -1,3 +1,3 @@
 export interface IEmailService {
-    sendUserAccountJoinVerification : ( email, code) => Promise<void>;
+    sendUserAccountJoinVerification : ( email : string, code : string ) => Promise<void>;
 }

@@ -20,6 +20,7 @@ export class EditUserHandler implements ICommandHandler<EditUserCommand> {
     @TryCatch('editProfile handler Error - ')
     async execute(command: EditUserCommand) : Promise<EditProfileOutput> {
         const { id, email, password } = command;
+        let code : string = null;
         // 입력 검증
         if( !email && !password ) {
             throw new Error('수정할 내용이 없습니다.')
@@ -36,10 +37,27 @@ export class EditUserHandler implements ICommandHandler<EditUserCommand> {
             editUserAccount.user.verified = false;
 
             await this.verifications.deleteVerification(editUserAccount.user.id);
-            verification = await this.verifications.createAndSaveVerification(editUserAccount.user);
+            verification = await this.verifications.createVerification(editUserAccount.user);
             if( !verification.ok ) {
                 throw new Error(  verification.error );
             }
+
+            console.log(verification.code);
+
+            const saveResult = await this.verifications.saveVerification(verification);
+            if(!saveResult.ok) {
+                await this.verifications.rollbackTransaction();
+                throw new Error(saveResult.error);
+            }
+
+            const commitResult = await this.verifications.commitTransaction();
+            if(!commitResult.ok) {
+                await this.verifications.rollbackTransaction();
+                throw new Error(  commitResult.error );
+            }
+
+            code = (await this.verifications.findOne( { where : {id : verification.id}})).code;
+            console.log(code);
             // 이메일 수정 시 메일 발송
         }
 
@@ -53,11 +71,17 @@ export class EditUserHandler implements ICommandHandler<EditUserCommand> {
             throw new Error( updateUserAccount.error );
         }
 
+        const userCommitResult = await this.users.commitTransaction();
+        if( !userCommitResult.ok ) {
+            this.users.rollbackTransaction();
+            throw new Error( userCommitResult.error );
+        }
+
         this.userFactory.create(
             updateUserAccount.user.id, updateUserAccount.user.email, updateUserAccount.user.password,
             updateUserAccount.user.role, updateUserAccount.user.verified, 
             updateUserAccount.user.createdAt, updateUserAccount.user.updatedAt, 
-            verification.Verification.code
+            code
         );
 
         return { ok: true, };
