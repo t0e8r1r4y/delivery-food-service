@@ -37,12 +37,11 @@ export class EditUserHandler implements ICommandHandler<EditUserCommand> {
             editUserAccount.user.verified = false;
 
             await this.verifications.deleteVerification(editUserAccount.user.id);
+
             verification = await this.verifications.createVerification(editUserAccount.user);
             if( !verification.ok ) {
                 throw new Error(  verification.error );
             }
-
-            console.log(verification.code);
 
             const saveResult = await this.verifications.saveVerification(verification);
             if(!saveResult.ok) {
@@ -56,9 +55,7 @@ export class EditUserHandler implements ICommandHandler<EditUserCommand> {
                 throw new Error(  commitResult.error );
             }
 
-            code = (await this.verifications.findOne( { where : {id : verification.id}})).code;
-            console.log(code);
-            // 이메일 수정 시 메일 발송
+            code = await this.verifications.getVerificationCode(verification.id);
         }
 
         // 비밀번호가 있으면 비번 수정
@@ -70,7 +67,7 @@ export class EditUserHandler implements ICommandHandler<EditUserCommand> {
         if( !updateUserAccount.ok ) {
             throw new Error( updateUserAccount.error );
         }
-
+        // 수정 내용 커밋
         const userCommitResult = await this.users.commitTransaction();
         if( !userCommitResult.ok ) {
             this.users.rollbackTransaction();

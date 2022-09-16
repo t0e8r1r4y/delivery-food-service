@@ -9,6 +9,23 @@ import { IVerificationRepository } from "../../../domain/repository/iverificatio
 
 @CustomRepository(Verification)
 export class VerificataionRepository extends Repository<Verification> implements IVerificationRepository {
+    
+    @TryCatch('Fail to find verified code instance - ')
+    async getVerificationCode(
+        id: number
+    ) : Promise<string> {
+        const verify = await this.findOne({
+            where : {
+                id : id,
+            }
+        });
+
+        if(!verify){
+            throw new Error('인증 정보를 찾을 수 없습니다.');
+        }
+
+        return verify.code;
+    }
 
 
     @TryCatch('Fail to create Verify instance - ')

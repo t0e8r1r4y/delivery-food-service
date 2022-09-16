@@ -4,6 +4,7 @@ import { Verification } from "src/users/infra/db/entities/verification.entity";
 
 // TODO - dto에 대한 통일 된 정리가 필요함.
 export interface IVerificationRepository {
+    getVerificationCode : ( id : number ) => Promise<string>;
     createVerification : ( user : UserEntity ) => Promise<verificationRepositoryResult>;
     saveVerification : ( verify : Verification ) => Promise<verificationRepositoryResult>;
     commitTransaction : () => Promise<verificationRepositoryResult>;
