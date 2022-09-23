@@ -1,12 +1,12 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Restaurant } from "../restaurants/entities/restaurant.entity";
+import { RestaurantEntity } from "../restaurants/infra/db/entities/restaurant.entity";
 import { UserEntity, UserRole } from "../users/infra/db/entities/user.entity";
 import { Repository } from "typeorm";
 import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
 import { Order, OrderStatus } from "./entities/order.entity";
 import { OrderItem } from "./entities/order-item.entity";
-import { Dish } from "../restaurants/entities/dish.entitiy";
+import { Dish } from "../restaurants/infra/db/entities/dish.entitiy";
 import { GetOrdersInput, GetOrdersOutput } from "./dtos/get-orders.dto";
 import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
 import { EditOrderInput, EditOrderOutput } from "./dtos/edit-order.dto";
@@ -21,8 +21,8 @@ export class OrderService {
         private readonly orders: Repository<Order>,
         @InjectRepository(OrderItem)
         private readonly orderItems: Repository<OrderItem>,
-        @InjectRepository(Restaurant)
-        private readonly restaurants: Repository<Restaurant>,
+        @InjectRepository(RestaurantEntity)
+        private readonly restaurants: Repository<RestaurantEntity>,
         @InjectRepository(Dish)
         private readonly dishes: Repository<Dish>,
         @Inject(PUB_SUB) private readonly pubSub : PubSub,

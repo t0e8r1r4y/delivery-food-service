@@ -6,7 +6,7 @@ import { EditProfileInput, EditProfileOutput } from "../interface/dtos/edit-prof
 import { VerifyEmailOutput } from "../interface/dtos/verify-email.dto";
 import { UserProfileOutput } from "../interface/dtos/user-profile.dto";
 import { MailService } from "../../mail/mail.service";
-import { TryCatch } from "../../common/decorator/trycatch.decorator";
+import { TryCatch } from "../../common/method-decorator/trycatch.decorator";
 import { UserRepository } from "../infra/db/repository/user.repository";
 import { VerificataionRepository } from "../infra/db/repository/verification.repository";
 

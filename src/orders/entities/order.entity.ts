@@ -1,6 +1,6 @@
 import { Field, Float, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { CoreEntity } from "../../common/entities/core.entity";
-import { Restaurant } from "../../restaurants/entities/restaurant.entity";
+import { RestaurantEntity } from "../../restaurants/infra/db/entities/restaurant.entity";
 import { UserEntity } from "../../users/infra/db/entities/user.entity";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, RelationId } from "typeorm";
 import { OrderItem } from "./order-item.entity";
@@ -43,13 +43,13 @@ export class Order extends CoreEntity {
     @RelationId((order : Order) => order.driver )
     driverId? : number;
 
-    @Field(type => Restaurant, { nullable:true })
+    @Field(type => RestaurantEntity, { nullable:true })
     @ManyToOne(
-        type => Restaurant,
+        type => RestaurantEntity,
         restaurant => restaurant.orders,
         { onDelete: 'SET NULL', nullable: true, eager: true }
     )
-    restaurant?: Restaurant;
+    restaurant?: RestaurantEntity;
 
     @Field(type => [OrderItem])
     @ManyToMany(type => OrderItem)

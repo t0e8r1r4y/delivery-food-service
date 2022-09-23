@@ -6,7 +6,7 @@ import { DataSource, Repository } from 'typeorm';
 import { UserEntity } from 'src/users/infra/db/entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { number } from 'joi';
-import { Verification } from 'src/users/infra/db/entities/verification.entity';
+import { VerificationEntity } from 'src/users/infra/db/entities/verification.entity';
 
 jest.mock('got', () => {
   return {
@@ -71,7 +71,7 @@ const testQuery = {
 describe('UserModule (e2e)', () => {
   let app : INestApplication;
   let userRepository : Repository<UserEntity>
-  let verificationRepository : Repository<Verification>
+  let verificationRepository : Repository<VerificationEntity>
   let jwtToken : string;
 
   // 계정을 생성하고 그것을 다시 조회하는 흐름으로 진행하기 위해서 beforeAll로 추가함
@@ -82,7 +82,7 @@ describe('UserModule (e2e)', () => {
 
     app = module.createNestApplication();
     userRepository = module.get<Repository<UserEntity>>(getRepositoryToken(UserEntity));
-    verificationRepository = module.get<Repository<Verification>>(getRepositoryToken(Verification));
+    verificationRepository = module.get<Repository<VerificationEntity>>(getRepositoryToken(VerificationEntity));
     await app.init();
   });
 

@@ -1,5 +1,4 @@
 import { ArgsType, Field, ObjectType } from "@nestjs/graphql";
-import { type } from "os";
 import { CoreOutput } from "../../../common/dtos/output.dto";
 import { UserEntity } from "../../infra/db/entities/user.entity";
 

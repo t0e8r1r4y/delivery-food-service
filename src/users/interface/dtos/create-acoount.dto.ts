@@ -1,6 +1,6 @@
 import { Field, InputType, ObjectType, PickType } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
-import { NotIn } from "../../../common/decorator/not-in.decorator";
+import { NotIn } from "../../../common/method-decorator/not-in.decorator";
 import { User } from "../../../users/domain/user";
 import { CoreOutput } from "../../../common/dtos/output.dto";
 import { UserEntity } from "../../infra/db/entities/user.entity"

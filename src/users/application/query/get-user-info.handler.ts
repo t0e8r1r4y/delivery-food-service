@@ -1,13 +1,8 @@
-import { NotFoundException } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { GetUserInfoQuery } from './get-user-info.query';
-import { UserInfo } from '../../../users/interface/UserInfo';
 import { UserRepository } from '../../infra/db/repository/user.repository';
-import { UserEntity } from '../../infra/db/entities/user.entity';
 import { UserProfileOutput } from '../../interface/dtos/user-profile.dto';
-import { TryCatch } from '../../../common/decorator/trycatch.decorator';
+import { TryCatchService } from "../../../common/method-decorator/trycatch-transaction.decorator";
 
 
 @QueryHandler(GetUserInfoQuery)
@@ -16,18 +11,14 @@ export class GetUserInfoQueryHandler implements IQueryHandler<GetUserInfoQuery> 
         private readonly users : UserRepository,
     ) {}
     
-    @TryCatch('GetUserInfoQueryHandler Error - ')
+    @TryCatchService('/GetUserInfoQueryHandler/execute')
     async execute(
         query: GetUserInfoQuery
     ) : Promise<UserProfileOutput> {
         const { userId } = query;
-
+        // 유저조회
         const user = await this.users.getUserAccountBy(userId);
-
-        if(!user.ok) {
-            throw new NotFoundException('유저가 존재하지 않습니다.');
-        }
-
-        return { ok : true, user : user.user };
+        // 결과 리턴
+        return { ok : true, user : user };
     }
 }

@@ -11,4 +11,5 @@ export class User {
         readonly createdAt : Date,
         readonly updatedAt : Date,
     ) {}
+
 }

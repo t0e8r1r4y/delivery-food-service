@@ -1,14 +1,33 @@
-import { verificationRepositoryResult } from "../../interface/dtos/repository-result.dto";
 import { UserEntity } from "../../infra/db/entities/user.entity";
-import { Verification } from "src/users/infra/db/entities/verification.entity";
+import { VerificationEntity } from "../../../users/infra/db/entities/verification.entity";
 
-// TODO - dto에 대한 통일 된 정리가 필요함.
 export interface IVerificationRepository {
-    getVerificationCode : ( id : number ) => Promise<string>;
-    createVerification : ( user : UserEntity ) => Promise<verificationRepositoryResult>;
-    saveVerification : ( verify : Verification ) => Promise<verificationRepositoryResult>;
-    commitTransaction : () => Promise<verificationRepositoryResult>;
-    rollbackTransaction : () => Promise<verificationRepositoryResult>;
-    deleteVerification : ( id : number ) => Promise<void>;
-    getVerificationByCode : ( code : string ) => Promise<verificationRepositoryResult>;
+    // TODO - get 방식에 대해서 코드 정리 필요
+    getVerificationCodeById : ( id : number ) => Promise<string>;
+    getVerificationByCode : ( code : string ) => Promise<VerificationEntity>;
+
+    /**
+     * create Verification Entity Instance
+     */
+    createVerification : ( user : UserEntity ) => Promise<VerificationEntity>;
+
+    /**
+     * save Verification Entity in Persistence Context
+     */
+    saveVerification : ( verify : VerificationEntity ) => Promise<VerificationEntity>;
+
+    /**
+     * transaction commit in DB
+     */
+    commitTransactions : () => Promise<boolean>;
+
+    /**
+     * transaction rollback in DB
+     */
+    rollbackTransactions : () => Promise<boolean>;
+
+    /**
+     * delete Verification Entity in database
+     */
+    deleteVerification : ( id : number ) => Promise<boolean>;
 }

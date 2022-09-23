@@ -4,7 +4,7 @@ import { UserEntity } from "../users/infra/db/entities/user.entity";
 import { LessThan, Repository } from "typeorm";
 import { CreatePaymentInput, CreatePaymentOutput } from "./dtos/create-payment.dto";
 import { Payment } from "./entities/payment.entity";
-import { Restaurant } from "../restaurants/entities/restaurant.entity";
+import { RestaurantEntity } from "../restaurants/infra/db/entities/restaurant.entity";
 import { GetPaymentOutput } from "./dtos/get-payment.dto";
 import { Cron,Interval } from '@nestjs/schedule';
 
@@ -13,8 +13,8 @@ export class PaymentService {
     constructor(
         @InjectRepository(Payment)
         private readonly payments : Repository<Payment>,
-        @InjectRepository(Restaurant)
-        private readonly restaurants : Repository<Restaurant>
+        @InjectRepository(RestaurantEntity)
+        private readonly restaurants : Repository<RestaurantEntity>
     ) {}
 
     async createPayment (

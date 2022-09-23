@@ -4,7 +4,7 @@ import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql"
 import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from "@nestjs/common";
 import { IsBoolean, IsEmail, IsEnum, IsString } from "class-validator";
-import { Restaurant } from "../../../../restaurants/entities/restaurant.entity";
+import { RestaurantEntity } from "../../../../restaurants/infra/db/entities/restaurant.entity";
 import { Order } from "../../../../orders/entities/order.entity";
 import { Payment } from "../../../../payments/entities/payment.entity";
 
@@ -40,12 +40,12 @@ export class UserEntity extends CoreEntity {
     @IsBoolean()
     verified : boolean;
 
-    @Field(type=> [Restaurant])
+    @Field(type=> [RestaurantEntity])
     @OneToMany(
-        type => Restaurant,
+        type => RestaurantEntity,
         restaurant => restaurant.owner
     )
-    restaurants: Restaurant[]
+    restaurants: RestaurantEntity[]
 
     @Field(type=> [Order])
     @OneToMany(

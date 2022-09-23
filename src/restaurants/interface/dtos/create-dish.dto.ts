@@ -1,6 +1,6 @@
 import { Field, InputType, Int, ObjectType, PickType } from "@nestjs/graphql";
-import { CoreOutput } from "../../common/dtos/output.dto";
-import { Dish } from "../entities/dish.entitiy";
+import { CoreOutput } from "../../../common/dtos/output.dto";
+import { Dish } from "../../infra/db/entities/dish.entitiy";
 
 
 @InputType()

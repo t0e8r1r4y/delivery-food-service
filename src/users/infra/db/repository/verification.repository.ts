@@ -1,17 +1,17 @@
-import { CustomRepository } from "../../../../common/typeorm-ex.decorator";
-import { EntityManager, Repository } from "typeorm";
-import { verificationRepositoryResult } from "../../../interface/dtos/repository-result.dto";
+import { CustomRepository } from "../../../../common/class-decorator.ts/typeorm-ex.decorator";
+import { Repository } from "typeorm";
 import { UserEntity } from "../entities/user.entity";
-import { Verification } from "../entities/verification.entity";
-import { TryCatch } from "../../../../common/decorator/trycatch.decorator";
+import { VerificationEntity } from "../entities/verification.entity";
+import { TryCatch } from "../../../../common/method-decorator/trycatch.decorator";
 import { NotFoundException } from "@nestjs/common";
 import { IVerificationRepository } from "../../../domain/repository/iverification.repository";
 
-@CustomRepository(Verification)
-export class VerificataionRepository extends Repository<Verification> implements IVerificationRepository {
+// UserRepository와 달리 CustomRepo로 코드를 작성하였습니다.
+@CustomRepository(VerificationEntity)
+export class VerificataionRepository extends Repository<VerificationEntity> implements IVerificationRepository {
     
-    @TryCatch('Fail to find verified code instance - ')
-    async getVerificationCode(
+    @TryCatch('/VerificataionRepository/getVerificationCodeById')
+    async getVerificationCodeById(
         id: number
     ) : Promise<string> {
         const verify = await this.findOne({
@@ -21,51 +21,60 @@ export class VerificataionRepository extends Repository<Verification> implements
         });
 
         if(!verify){
-            throw new Error('인증 정보를 찾을 수 없습니다.');
+            throw new Error('/인증 정보를 찾을 수 없습니다.');
         }
 
         return verify.code;
     }
 
 
-    @TryCatch('Fail to create Verify instance - ')
+    @TryCatch('/VerificataionRepository/createVerification')
     async createVerification(
         user: UserEntity
-    ) : Promise<verificationRepositoryResult> {
+    ) : Promise<VerificationEntity> {
         const verify = this.create({
             user : {
                 id: user.id
             }
         });
         if(!verify) {
-            throw new Error('인증 정보를 정상 생성하지 못했습니다.');
+            throw new Error('/인증 정보를 정상 생성하지 못했습니다.');
         }
-        return {ok: true, verification: verify};
+        return verify;
     }
 
+    @TryCatch('/VerificataionRepository/saveVerification')
     async saveVerification (
-        verify: Verification
-    ) : Promise<verificationRepositoryResult> {
-        let isResult : verificationRepositoryResult = {ok:false, };
+        verify: VerificationEntity
+    ) : Promise<VerificationEntity> {
+
+        let saveVerifiy : VerificationEntity = null;
+        let errorMsg : string = null;
+
         const queryRunner = await this.manager.connection.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
 
         try {
-            await queryRunner.manager.save(verify);
+            saveVerifiy = await queryRunner.manager.save(verify);
         } catch (error) {
-            isResult.error = error;
+            errorMsg = error.message;
         } finally {
             await queryRunner.release();
-            isResult.ok = true;
-            isResult.verification = verify;
         }
 
-        return isResult;
+        if(errorMsg !== null) {
+            throw new Error('/'+errorMsg);
+        }
+
+        return saveVerifiy;
     }
 
-    async commitTransaction() : Promise<verificationRepositoryResult> {
-        let isResult : verificationRepositoryResult = {ok:false, };
+    @TryCatch('/VerificataionRepository/commitTransaction')
+    async commitTransactions() : Promise<boolean> {
+        
+        let errorMsg : string = null;
+
         const queryRunner = await this.manager.connection.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
@@ -73,16 +82,24 @@ export class VerificataionRepository extends Repository<Verification> implements
         try {
             await queryRunner.commitTransaction();
         } catch (error) {
-            isResult.error = error;
+            await queryRunner.rollbackTransaction();
+            errorMsg = error.message;
         } finally {
             await queryRunner.release();
-            isResult.ok = true;
         }
-        return isResult;
+
+        if(errorMsg !== null) {
+            throw new Error('/'+errorMsg);
+        }
+
+        return true;
     }
 
-    async rollbackTransaction() : Promise<verificationRepositoryResult> {
-        let isResult : verificationRepositoryResult = {ok:false, };
+    @TryCatch('/VerificataionRepository/rollbackTransaction')
+    async rollbackTransactions() : Promise<boolean> {
+        
+        let errorMsg : string = null;
+        
         const queryRunner = await this.manager.connection.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
@@ -90,26 +107,40 @@ export class VerificataionRepository extends Repository<Verification> implements
         try {
             await queryRunner.rollbackTransaction();
         } catch (error) {
-            isResult.error = error;
+            errorMsg = error.message;
         } finally {
             await queryRunner.release();
-            isResult.ok = true;
         }
-        return isResult;
+
+        if(errorMsg !== null) {
+            throw new Error('/'+errorMsg);
+        }
+
+        return true;
     }
 
 
-    @TryCatch('delete fail - ')
-    async deleteVerification( id : number ) : Promise<void> {
+    @TryCatch('/VerificataionRepository/deleteVerification')
+    async deleteVerification( id : number ) : Promise<boolean> {
         await this.delete({
             user : {
                 id : id,
             }
         });
+
+        return true;
     }
 
-    @TryCatch('getVerificationByCode fail - ')
-    async getVerificationByCode( code : string ) : Promise<verificationRepositoryResult> {
+    @TryCatch('/VerificataionRepository/deleteVerificationById')
+    async deleteVerificationById( id : number ) : Promise<boolean> {
+        await this.delete(id);
+        return true;
+    }
+
+    @TryCatch('/VerificataionRepository/getVerificationByCode')
+    async getVerificationByCode( 
+        code : string 
+    ) : Promise<VerificationEntity> {
         const verify = await this.findOne({
             where : {
                 code : code,
@@ -118,9 +149,9 @@ export class VerificataionRepository extends Repository<Verification> implements
         });
 
         if(!verify) {
-            throw new NotFoundException('인증값을 찾지 못했습니다.');
+            throw new NotFoundException('/인증값을 찾지 못했습니다.');
         }
 
-        return {ok : true, verification: verify};
+        return verify;
     }
 }

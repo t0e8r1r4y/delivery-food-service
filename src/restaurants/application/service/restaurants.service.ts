@@ -1,28 +1,28 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Like, Raw, Repository } from "typeorm";
-import { Restaurant } from "./entities/restaurant.entity";
-import { CreateRestaurantInput, CreateRestaurnatOutput } from "./dtos/create-restaurant.dto";
+import { RestaurantEntity } from "../../infra/db/entities/restaurant.entity";
+import { CreateRestaurantInput, CreateRestaurnatOutput } from "../../interface/dtos/create-restaurant.dto";
 import { UserEntity } from "src/users/infra/db/entities/user.entity";
-import { EditRestaurantInput, EditRestaurantOutput } from "./dtos/edit-restaurant.dto";
-import { Category } from "./entities/category.entity";
-import { DeleteRestaurantInput, DeleteRestaurantOutput } from "./dtos/delete-restaurant.dto";
-import { AllCategoriesOutput } from "./dtos/all-categories.dto";
-import { CategoryInput, CategoryOutput } from "./dtos/category.dto";
-import { RestaurantsInput, RestaurantsOutput } from "./dtos/restaurants.dto";
-import { RestaurantInput, RestaurantOutput } from  "./dtos/restaurant.dto";
-import { SearchRestaurantInput, SearchRestaurantOutput } from "./dtos/search-restaurant.dto";
-import { CreateDishInput, CreateDishOutput } from "./dtos/create-dish.dto";
-import { Dish } from "./entities/dish.entitiy";
-import { EditDishInput, EditDishOutput } from "./dtos/edit-dish.dto";
-import { DeleteDishInput, DeleteDishOutput } from "./dtos/delete-dish.dto";
+import { EditRestaurantInput, EditRestaurantOutput } from "../../interface/dtos/edit-restaurant.dto";
+import { Category } from "../../infra/db/entities/category.entity";
+import { DeleteRestaurantInput, DeleteRestaurantOutput } from "../../interface/dtos/delete-restaurant.dto";
+import { AllCategoriesOutput } from "../../interface/dtos/all-categories.dto";
+import { CategoryInput, CategoryOutput } from "../../interface/dtos/category.dto";
+import { RestaurantsInput, RestaurantsOutput } from "../../interface/dtos/restaurants.dto";
+import { RestaurantInput, RestaurantOutput } from  "../../interface/dtos/restaurant.dto";
+import { SearchRestaurantInput, SearchRestaurantOutput } from "../../interface/dtos/search-restaurant.dto";
+import { CreateDishInput, CreateDishOutput } from "../../interface/dtos/create-dish.dto";
+import { Dish } from "../../infra/db/entities/dish.entitiy";
+import { EditDishInput, EditDishOutput } from "../../interface/dtos/edit-dish.dto";
+import { DeleteDishInput, DeleteDishOutput } from "../../interface/dtos/delete-dish.dto";
 
 @Injectable()
 export class RestaurantService {
     
     constructor(
-        @InjectRepository(Restaurant) // only need entity
-        private readonly restaurants: Repository<Restaurant>,
+        @InjectRepository(RestaurantEntity) // only need entity
+        private readonly restaurants: Repository<RestaurantEntity>,
         @InjectRepository(Category)
         private readonly categories: Repository<Category>,
         @InjectRepository(Dish)

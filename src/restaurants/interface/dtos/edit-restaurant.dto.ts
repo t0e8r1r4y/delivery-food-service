@@ -1,6 +1,6 @@
 import { Extensions, Field, InputType, ObjectType, PartialType, PickType } from "@nestjs/graphql";
-import { CoreOutput } from "../../common/dtos/output.dto";
-import { Restaurant } from "../entities/restaurant.entity";
+import { CoreOutput } from "../../../common/dtos/output.dto";
+import { RestaurantEntity } from "../../infra/db/entities/restaurant.entity";
 import { CreateRestaurantInput } from "./create-restaurant.dto";
 
 

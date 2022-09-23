@@ -1,19 +1,19 @@
 import { Resolver, Query, Args, Mutation, Int, ResolveField, Parent } from "@nestjs/graphql";
-import { Restaurant } from "./entities/restaurant.entity";
+import { RestaurantEntity } from "../infra/db/entities/restaurant.entity";
 import { CreateRestaurantInput, CreateRestaurnatOutput } from "./dtos/create-restaurant.dto"
-import { RestaurantService } from "./restaurants.service";
-import { AuthUser } from "../auth/auth-user.decorator";
-import { UserEntity } from "../users/infra/db/entities/user.entity";
-import { Role } from "../auth/role.decorator";
+import { RestaurantService } from "../application/service/restaurants.service";
+import { AuthUser } from "../../auth/auth-user.decorator";
+import { UserEntity } from "../../users/infra/db/entities/user.entity";
+import { Role } from "../../auth/role.decorator";
 import { EditRestaurantInput, EditRestaurantOutput } from "./dtos/edit-restaurant.dto";
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from "./dtos/delete-restaurant.dto";
-import { Category } from "./entities/category.entity";
+import { Category } from "../infra/db/entities/category.entity";
 import { AllCategoriesOutput } from "./dtos/all-categories.dto";
 import { CategoryInput, CategoryOutput } from "./dtos/category.dto";
 import { RestaurantsInput, RestaurantsOutput } from "./dtos/restaurants.dto";
 import { RestaurantInput, RestaurantOutput } from "./dtos/restaurant.dto";
 import { SearchRestaurantInput, SearchRestaurantOutput } from "./dtos/search-restaurant.dto";
-import { Dish } from "./entities/dish.entitiy";
+import { Dish } from "../infra/db/entities/dish.entitiy";
 import { CreateDishOutput, CreateDishInput } from "./dtos/create-dish.dto";
 import { EditDishInput, EditDishOutput } from "./dtos/edit-dish.dto";
 import { DeleteDishInput, DeleteDishOutput } from "./dtos/delete-dish.dto";
@@ -24,7 +24,7 @@ import { DeleteDishInput, DeleteDishOutput } from "./dtos/delete-dish.dto";
 // - Delete Dish
 const testResult = {ok:false, error: "테스트 중입니다."};
 
-@Resolver(of => Restaurant)
+@Resolver(of => RestaurantEntity)
 export class RestaurantResolver {
     constructor(private readonly restaurnatService: RestaurantService) {}
 

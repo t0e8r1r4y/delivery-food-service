@@ -1,10 +1,10 @@
 import { Field, InputType, ObjectType, PickType } from "@nestjs/graphql";
-import { CoreOutput } from "../../common/dtos/output.dto";
-import { Restaurant } from "../entities/restaurant.entity";
+import { CoreOutput } from "../../../common/dtos/output.dto";
+import { RestaurantEntity } from "../../infra/db/entities/restaurant.entity";
 
 // @ArgsType() -> @Args로 받는 경우
 @InputType()
-export class CreateRestaurantInput extends PickType(Restaurant, 
+export class CreateRestaurantInput extends PickType(RestaurantEntity, 
     [
         'name', 
         'coverImage', 
