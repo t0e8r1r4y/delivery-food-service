@@ -1,6 +1,6 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { CoreEntity } from "../../common/entities/core.entity";
-import { Dish, DishChoice } from "../../restaurants/entities/dish.entitiy";
+import { DishEntity, DishChoice } from "../../restaurants/infra/db/entities/dish.entitiy";
 import { Column, Entity, ManyToOne } from "typeorm";
 
 @InputType('OrderItemInputType', { isAbstract: true })
@@ -17,12 +17,12 @@ export class OrderItemOption {
 @Entity()
 export class OrderItem extends CoreEntity {
     
-    @Field(type => Dish)
+    @Field(type => DishEntity)
     @ManyToOne(
-        type=> Dish, 
+        type=> DishEntity, 
         {nullable:true, onDelete: 'CASCADE'}
     )
-    dish: Dish;
+    dish: DishEntity;
 
     @Field(type=>[OrderItemOption], {nullable: true})
     @Column({type: 'json', nullable: true})

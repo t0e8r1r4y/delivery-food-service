@@ -1,7 +1,7 @@
 import { Args, Mutation, Resolver, Query, Subscription } from "@nestjs/graphql";
 import { Role } from "../auth/role.decorator";
 import { AuthUser } from "../auth/auth-user.decorator";
-import { User } from "../users/entities/user.entity";
+import { UserEntity } from "../users/infra/db/entities/user.entity";
 import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
 import { Order } from "./entities/order.entity";
 import { OrderService } from "./order.service";
@@ -25,7 +25,7 @@ export class OrderResolver {
     @Mutation(returns => CreateOrderOutput)
     @Role(['Client'])
     async createOrder(
-        @AuthUser() customer : User,
+        @AuthUser() customer : UserEntity,
         @Args('input')
         createOrderInput : CreateOrderInput,
     ) : Promise<CreateOrderOutput> {
@@ -35,7 +35,7 @@ export class OrderResolver {
     @Query(returns => GetOrdersOutput)
     @Role(['Any'])
     async getOrders(
-        @AuthUser() user : User,
+        @AuthUser() user : UserEntity,
         @Args('input') getOrdersInput : GetOrdersInput,
     ) : Promise<GetOrdersOutput> {
         return this.ordersService.getOrders(user, getOrdersInput);
@@ -44,7 +44,7 @@ export class OrderResolver {
     @Query(returns => GetOrderOutput)
     @Role(['Any'])
     async getOrder(
-        @AuthUser() user : User,
+        @AuthUser() user : UserEntity,
         @Args('input') getOrderInput : GetOrderInput,
     ) : Promise<GetOrderOutput> {
         return this.ordersService.getOrder(user, getOrderInput);
@@ -53,7 +53,7 @@ export class OrderResolver {
     @Mutation(returns => EditOrderOutput)
     @Role(['Any'])
     async editOrder(
-        @AuthUser() user: User,
+        @AuthUser() user: UserEntity,
         @Args('input') editOrderInput : EditOrderInput
     ) : Promise<EditOrderOutput> {
         return this.ordersService.editOrder(user, editOrderInput);
@@ -84,7 +84,7 @@ export class OrderResolver {
         filter : (
             { orderUpdates: order} : {orderUpdates : Order},
             {input} : {input: OrderUpdatesInput},
-            {user} : {user: User},
+            {user} : {user: UserEntity},
         ) => {
             if(
                 // 셋다 아니라면 관계자가 아님
@@ -105,7 +105,7 @@ export class OrderResolver {
     @Mutation(returns => TakeOrderOutput)
     @Role(["Delivery"])
     takeOrder(
-        @AuthUser() driver: User,
+        @AuthUser() driver: UserEntity,
         @Args('input') takeOrderInput :  TakeOrderInput 
     ) : Promise<TakeOrderOutput> {
         return this.ordersService.takeOrder(driver,takeOrderInput);

@@ -1,12 +1,12 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Restaurant } from "../restaurants/entities/restaurant.entity";
-import { User, UserRole } from "../users/entities/user.entity";
+import { RestaurantEntity } from "../restaurants/infra/db/entities/restaurant.entity";
+import { UserEntity, UserRole } from "../users/infra/db/entities/user.entity";
 import { Repository } from "typeorm";
 import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
 import { Order, OrderStatus } from "./entities/order.entity";
 import { OrderItem } from "./entities/order-item.entity";
-import { Dish } from "../restaurants/entities/dish.entitiy";
+import { DishEntity } from "../restaurants/infra/db/entities/dish.entitiy";
 import { GetOrdersInput, GetOrdersOutput } from "./dtos/get-orders.dto";
 import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
 import { EditOrderInput, EditOrderOutput } from "./dtos/edit-order.dto";
@@ -21,15 +21,15 @@ export class OrderService {
         private readonly orders: Repository<Order>,
         @InjectRepository(OrderItem)
         private readonly orderItems: Repository<OrderItem>,
-        @InjectRepository(Restaurant)
-        private readonly restaurants: Repository<Restaurant>,
-        @InjectRepository(Dish)
-        private readonly dishes: Repository<Dish>,
+        @InjectRepository(RestaurantEntity)
+        private readonly restaurants: Repository<RestaurantEntity>,
+        @InjectRepository(DishEntity)
+        private readonly dishes: Repository<DishEntity>,
         @Inject(PUB_SUB) private readonly pubSub : PubSub,
     ) {}
 
     async createOrder(
-        customer : User,
+        customer : UserEntity,
         createOrderInput : CreateOrderInput,
     ) : Promise<CreateOrderOutput> {
         try {
@@ -151,7 +151,7 @@ export class OrderService {
     }
 
     async getOrders (
-        user : User,
+        user : UserEntity,
         getOrdersInput : GetOrdersInput,
     ) : Promise<GetOrdersOutput> {
         const status = getOrdersInput.status;
@@ -216,7 +216,7 @@ export class OrderService {
     }
 
     async getOrder(
-        user:User, getOrderInput : GetOrderInput
+        user:UserEntity, getOrderInput : GetOrderInput
     ) : Promise<GetOrderOutput> {
         try {
             const order = await this.orders.findOne(
@@ -245,7 +245,7 @@ export class OrderService {
 
 
     async editOrder(
-        user: User,
+        user: UserEntity,
         editOrderInput : EditOrderInput
     ) : Promise<EditOrderOutput> {
         try {
@@ -316,7 +316,7 @@ export class OrderService {
     }
 
     async takeOrder (
-        user: User,
+        user: UserEntity,
         takeOrderInput :  TakeOrderInput 
     ) : Promise<TakeOrderOutput> {
         try {
@@ -357,7 +357,7 @@ export class OrderService {
 
 
     canSeeOrder(
-        user : User,
+        user : UserEntity,
         order : Order
     ) : boolean {
         let canSee = true;

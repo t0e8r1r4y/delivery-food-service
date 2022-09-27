@@ -3,10 +3,10 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { DataSource, Repository } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
+import { UserEntity } from 'src/users/infra/db/entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { number } from 'joi';
-import { Verification } from 'src/users/entities/verification.entity';
+import { VerificationEntity } from 'src/users/infra/db/entities/verification.entity';
 
 jest.mock('got', () => {
   return {
@@ -70,8 +70,8 @@ const testQuery = {
 // 테스트가 진행되는 코드입니다.
 describe('UserModule (e2e)', () => {
   let app : INestApplication;
-  let userRepository : Repository<User>
-  let verificationRepository : Repository<Verification>
+  let userRepository : Repository<UserEntity>
+  let verificationRepository : Repository<VerificationEntity>
   let jwtToken : string;
 
   // 계정을 생성하고 그것을 다시 조회하는 흐름으로 진행하기 위해서 beforeAll로 추가함
@@ -81,8 +81,8 @@ describe('UserModule (e2e)', () => {
     }).compile();
 
     app = module.createNestApplication();
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
-    verificationRepository = module.get<Repository<Verification>>(getRepositoryToken(Verification));
+    userRepository = module.get<Repository<UserEntity>>(getRepositoryToken(UserEntity));
+    verificationRepository = module.get<Repository<VerificationEntity>>(getRepositoryToken(VerificationEntity));
     await app.init();
   });
 
