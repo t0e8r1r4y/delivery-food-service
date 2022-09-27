@@ -1,6 +1,6 @@
 import {Field, InputType, ObjectType } from "@nestjs/graphql";
 import { PaginationInput, PaginationOutput } from "../../../common/dtos/pagenation.dto";
-import { Category } from "../../infra/db/entities/category.entity";
+import { CategoryEntity } from "../../infra/db/entities/category.entity";
 
 @InputType()
 export class CategoryInput extends PaginationInput {
@@ -10,6 +10,6 @@ export class CategoryInput extends PaginationInput {
 
 @ObjectType()
 export class CategoryOutput extends PaginationOutput {
-    @Field(type => Category, {nullable: true})
-    category?:Category;
+    @Field(type => CategoryEntity, {nullable: true})
+    category?:CategoryEntity;
 }

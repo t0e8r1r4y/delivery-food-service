@@ -1,7 +1,6 @@
 import { EventBus } from "@nestjs/cqrs";
 import { Test } from "@nestjs/testing";
 import { UserRole } from "../infra/db/entities/user.entity";
-import { UserRepository } from "../infra/db/repository/user.repository";
 import { User } from "./user";
 import { UserFactory } from "./user.factory"
 

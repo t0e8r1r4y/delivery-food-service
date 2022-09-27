@@ -16,22 +16,3 @@ export class CreateRestaurantInput extends PickType(RestaurantEntity,
 
 @ObjectType()
 export class CreateRestaurnatOutput extends CoreOutput {}
-// export class CreateRestaurantDto {
-    
-//     @Field(type => String)
-//     @IsString()
-//     @Length(5, 10)
-//     name : string;
-
-//     @Field(type => Boolean)
-//     @IsBoolean() 
-//     isVegan : boolean;
-
-//     @Field(type => String)
-//     @IsString()
-//     address : string;
-
-//     @Field(type => String)
-//     @IsString()
-//     ownersName : string;
-// }

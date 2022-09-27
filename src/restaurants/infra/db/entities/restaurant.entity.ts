@@ -2,9 +2,9 @@ import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import { IsString, Length } from "class-validator";
 import { CoreEntity } from "../../../../common/entities/core.entity";
 import { Column, Entity, ManyToOne, OneToMany, RelationId } from "typeorm";
-import { Category } from "./category.entity";
+import { CategoryEntity } from "./category.entity";
 import { UserEntity } from "../../../../users/infra/db/entities/user.entity";
-import { Dish } from "./dish.entitiy";
+import { DishEntity } from "./dish.entitiy";
 import { Order } from "../../../../orders/entities/order.entity";
 
 @InputType( 'RestuarnatInputType' , {isAbstract:true})
@@ -28,13 +28,13 @@ export class RestaurantEntity extends CoreEntity {
     @IsString()
     address : string;
 
-    @Field(type => Category, {nullable: true})
+    @Field(type => CategoryEntity, {nullable: true})
     @ManyToOne(
-        tpye => Category, 
+        tpye => CategoryEntity, 
         category =>category.restaurants,
         { nullable: true, onDelete: 'SET NULL', eager: true },
     )
-    category: Category;
+    category: CategoryEntity;
 
     @Field(type => UserEntity)
     @ManyToOne(
@@ -54,12 +54,12 @@ export class RestaurantEntity extends CoreEntity {
     @RelationId((restaurant : RestaurantEntity) => restaurant.owner )
     owenrId : number;
 
-    @Field(type => [Dish], {nullable: true})
+    @Field(type => [DishEntity], {nullable: true})
     @OneToMany(
-        type => Dish,
+        type => DishEntity,
         dish => dish.restaurant,
     )
-    menu: Dish[];
+    menu: DishEntity[];
 
     @Field(type => Boolean)
     @Column({default : false})

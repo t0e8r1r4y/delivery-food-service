@@ -1,7 +1,5 @@
 import { Inject } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { JwtService } from '../../../jwt/jwt.service';
-import { MailService } from '../../../mail/mail.service';
 import { UserCreateEvent } from '../../../users/domain/user-created.event';
 import { IEmailService } from '../adapter/iemail.service';
 

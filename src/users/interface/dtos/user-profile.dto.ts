@@ -1,4 +1,5 @@
 import { ArgsType, Field, ObjectType } from "@nestjs/graphql";
+import { User } from "../../../users/domain/user";
 import { CoreOutput } from "../../../common/dtos/output.dto";
 import { UserEntity } from "../../infra/db/entities/user.entity";
 
@@ -12,5 +13,5 @@ export class UserProfileInput {
 @ObjectType()
 export class UserProfileOutput extends CoreOutput {
     @Field(tpye=>UserEntity, {nullable:true})
-    user?: UserEntity;
+    user? : User;
 }

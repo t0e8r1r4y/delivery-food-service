@@ -3,8 +3,11 @@ import { UserRepository } from "../../../users/infra/db/repository/user.reposito
 import { GetUserInfoQueryHandler } from "./get-user-info.handler";
 import { GetUserInfoQuery } from "./get-user-info.query";
 import { UserEntity, UserRole } from "src/users/infra/db/entities/user.entity";
+import { UserFactory } from "../../../users/domain/user.factory";
+import { User } from "src/users/domain/user";
 
 type MockRepository = Partial< Record< keyof UserRepository, jest.Mock > >;
+type MockFactory = Partial< Record< keyof UserFactory, jest.Mock > >;
 
 describe('getUserInfoHandler', () => {
     const input : GetUserInfoQuery = {
@@ -31,13 +34,24 @@ describe('getUserInfoHandler', () => {
         }
     }
 
+    const user = new User( userEntity.id, userEntity.email, userEntity.password,
+        userEntity.role, userEntity.verified, userEntity.createdAt, userEntity.updatedAt );
+
     let getUserInfoHandler : GetUserInfoQueryHandler;
     let userRepository : MockRepository;
+    let userFactory : MockFactory;
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
           providers : [
             GetUserInfoQueryHandler,
+            {
+                provide: UserFactory,
+                useValue: {
+                    create: jest.fn(),
+                    reconstitute: jest.fn(),
+                },
+            },
             {
                 provide: UserRepository,
                 useValue: {
@@ -49,16 +63,18 @@ describe('getUserInfoHandler', () => {
 
         getUserInfoHandler = module.get(GetUserInfoQueryHandler);
         userRepository = module.get(UserRepository);
+        userFactory = module.get(UserFactory);
     });
 
     it('should return success.',async () => {
         userRepository.getUserAccountBy.mockReturnValue(userEntity);
+        userFactory.reconstitute.mockReturnValue(user);
 
         const res = await getUserInfoHandler.execute(new GetUserInfoQuery(input.userId));
 
         expect(res.ok).toBeTruthy();
         expect(res.error).toBeUndefined();
-        expect(res.user).toEqual(userEntity);
+        expect(res.user).toEqual(user);
         expect(userRepository.getUserAccountBy).toBeCalledTimes(1);
     });
 

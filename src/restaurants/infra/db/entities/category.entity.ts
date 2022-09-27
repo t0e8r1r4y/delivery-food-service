@@ -11,7 +11,7 @@ import { type } from "os";
 @InputType( 'CategoryInputType'  ,{isAbstract:true})
 @ObjectType()   // for graphQL
 @Entity()       // for typeORM
-export class Category extends CoreEntity {
+export class CategoryEntity extends CoreEntity {
     
     // describe restaurant side of graphQL
     @Field(type => String)

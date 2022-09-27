@@ -12,7 +12,6 @@ import { VerificationService } from "../service/verification.service";
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
 
     constructor(
-        private userFactory: UserFactory,
         private readonly users : UserRepository,
         // User와 관련된 기능에 포함되는 서비스라 별도로 외부 service로 분리하지 않음.
         private readonly verification : VerificationService,
@@ -38,13 +37,17 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
         // 인증 코드 생성이 완료되면 사용자 계정 DB 커밋
         await this.users.commitTransaction();
         // user 인스턴스를 생성하면서, 이벤트로 인증 메일 발송
+
+        /**
+         * TODO - Front에서 생성된 user 객체의 정보를 요청 할 경우 위 생성 객체를 결과로 전달.
+         * 
         this.userFactory.create( 
             saveUserAccountResult.id, saveUserAccountResult.email, saveUserAccountResult.password,
             saveUserAccountResult.role, saveUserAccountResult.verified, 
             saveUserAccountResult.createdAt, saveUserAccountResult.updatedAt, 
             verificationCode
         );
-        // TODO - Front에서 생성된 user 객체의 정보를 요청 할 경우 위 생성 객체를 결과로 전달.
+         */
         return { ok : true, error: null };
     }
 }

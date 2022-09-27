@@ -30,7 +30,7 @@ export class DishOption {
 @InputType('DishInputType', {isAbstract:true})
 @ObjectType()
 @Entity()
-export class Dish extends CoreEntity {
+export class DishEntity extends CoreEntity {
 
     @Field(type => String)
     @Column()
@@ -61,7 +61,7 @@ export class Dish extends CoreEntity {
     )
     restaurant : RestaurantEntity;
 
-    @RelationId((dish: Dish) => dish.restaurant)
+    @RelationId((dish: DishEntity) => dish.restaurant)
     restaurantId : number;
 
 

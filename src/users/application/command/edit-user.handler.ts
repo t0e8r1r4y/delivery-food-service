@@ -12,7 +12,7 @@ import { VerificationService } from "../service/verification.service";
 export class EditUserHandler implements ICommandHandler<EditUserCommand> {
     
     constructor(
-        private userFactory: UserFactory,
+        // private userFactory: UserFactory,
         private readonly users : UserRepository,
         private readonly verification : VerificationService,
     ) {}
@@ -50,13 +50,14 @@ export class EditUserHandler implements ICommandHandler<EditUserCommand> {
         // 수정 내용 커밋
         await this.users.commitTransaction();
         // user 인스턴스를 생성하면서, 이벤트로 인증 메일 발송
-        this.userFactory.create(
-            updateUserAccount.id, updateUserAccount.email, updateUserAccount.password,
-            updateUserAccount.role, updateUserAccount.verified, 
-            updateUserAccount.createdAt, updateUserAccount.updatedAt, 
-            code
-        );
+
         // TODO - Front에서 생성된 user 객체의 정보를 요청 할 경우 위 생성 객체를 결과로 전달.
+        // this.userFactory.create(
+        //     updateUserAccount.id, updateUserAccount.email, updateUserAccount.password,
+        //     updateUserAccount.role, updateUserAccount.verified, 
+        //     updateUserAccount.createdAt, updateUserAccount.updatedAt, 
+        //     code
+        // );
         return { ok: true, };
     }
     

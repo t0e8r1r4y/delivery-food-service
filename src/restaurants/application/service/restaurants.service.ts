@@ -5,7 +5,7 @@ import { RestaurantEntity } from "../../infra/db/entities/restaurant.entity";
 import { CreateRestaurantInput, CreateRestaurnatOutput } from "../../interface/dtos/create-restaurant.dto";
 import { UserEntity } from "src/users/infra/db/entities/user.entity";
 import { EditRestaurantInput, EditRestaurantOutput } from "../../interface/dtos/edit-restaurant.dto";
-import { Category } from "../../infra/db/entities/category.entity";
+import { CategoryEntity } from "../../infra/db/entities/category.entity";
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from "../../interface/dtos/delete-restaurant.dto";
 import { AllCategoriesOutput } from "../../interface/dtos/all-categories.dto";
 import { CategoryInput, CategoryOutput } from "../../interface/dtos/category.dto";
@@ -13,7 +13,7 @@ import { RestaurantsInput, RestaurantsOutput } from "../../interface/dtos/restau
 import { RestaurantInput, RestaurantOutput } from  "../../interface/dtos/restaurant.dto";
 import { SearchRestaurantInput, SearchRestaurantOutput } from "../../interface/dtos/search-restaurant.dto";
 import { CreateDishInput, CreateDishOutput } from "../../interface/dtos/create-dish.dto";
-import { Dish } from "../../infra/db/entities/dish.entitiy";
+import { DishEntity } from "../../infra/db/entities/dish.entitiy";
 import { EditDishInput, EditDishOutput } from "../../interface/dtos/edit-dish.dto";
 import { DeleteDishInput, DeleteDishOutput } from "../../interface/dtos/delete-dish.dto";
 
@@ -23,17 +23,17 @@ export class RestaurantService {
     constructor(
         @InjectRepository(RestaurantEntity) // only need entity
         private readonly restaurants: Repository<RestaurantEntity>,
-        @InjectRepository(Category)
-        private readonly categories: Repository<Category>,
-        @InjectRepository(Dish)
-        private readonly dishes: Repository<Dish>,
+        @InjectRepository(CategoryEntity)
+        private readonly categories: Repository<CategoryEntity>,
+        @InjectRepository(DishEntity)
+        private readonly dishes: Repository<DishEntity>,
     ) {}
 
     /**
      * Todo - 해당 로직도 빼야된다.
      * 카테고리를 체크하고 있으면 카테고리를 리턴. 없으면 생성 후 리턴
      */
-    async getOrCreateCategory( name : string ) : Promise<Category> {
+    async getOrCreateCategory( name : string ) : Promise<CategoryEntity> {
         const categoryName = name.trim().toLowerCase();
         const categorySlug = categoryName.replace(/ /g, '-');
         let category = await this.categories.findOne( {where: { slug: categorySlug }} );
@@ -59,7 +59,7 @@ export class RestaurantService {
             return { ok: true, error: null }; 
         } catch (error) {
             console.log(error);
-            return { ok: false, error: "레스토랑을 생성할 수 없습ㄴ디ㅏ."};
+            return { ok: false, error: "레스토랑을 생성할 수 없습니다."};
         }
     }
 
@@ -75,12 +75,7 @@ export class RestaurantService {
                 },
                 loadRelationIds: true,
             });
-            // const restaurant = await this.restaurants.findOne( 
-            //     {  
-            //         where: editRestaurantInput,
-            //         loadRelationIds: true 
-            //     } 
-            // );
+
 
             if(!restaurant) {
                 return {
@@ -98,7 +93,7 @@ export class RestaurantService {
             }
 
             // 레스토랑도 찾았고 입력받은 주인과 동일
-            let category : Category = null;
+            let category : CategoryEntity = null;
             if(editRestaurantInput.categoryName) {
                 category = await this.getOrCreateCategory(editRestaurantInput.categoryName);
             }
@@ -156,15 +151,6 @@ export class RestaurantService {
         }
     }
 
-    // getAll() : Promise<Restaurant[]> {
-    //     return this.restaurants.find();
-    // }
-
-
-    // updateRestaurant({id, data} : UpdateRestaurantDto) {
-    //     // UpdateRestaurantInputType
-    //     return this.restaurants.update(id, {...data});
-    // }
 
     async allCategories() : Promise<AllCategoriesOutput> {
         try {
@@ -176,7 +162,7 @@ export class RestaurantService {
         }
     }
 
-    async countRestaurants( category : Category ) {
+    async countRestaurants( category : CategoryEntity ) {
         return this.restaurants.count(
             {
                 where : {
@@ -328,12 +314,7 @@ export class RestaurantService {
                 return { ok: false, error: "해당 사용자는 디시를 추가할 권한이 없습니다." };
             }
 
-            // 매장이 있고 매장 주인 정보를 확인 함
-            // 디시 생성
-            // 아래 코드 보다는
-            // let dish = this.dishes.create(createDishInput);
-            // dish.restaurant = restaurant;
-            // await this.dishes.save(dish);
+
             const dish = await this.dishes.save(
                 {...this.dishes.create(createDishInput), restaurant }
             )
