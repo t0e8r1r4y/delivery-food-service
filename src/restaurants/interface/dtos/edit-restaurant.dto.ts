@@ -12,11 +12,3 @@ export class EditRestaurantInput extends PartialType(CreateRestaurantInput){
 
 @ObjectType()
 export class EditRestaurantOutput extends CoreOutput {}
-// export class EditRestaurantInput extends PartialType(
-//     PickType(
-//         Restaurant, ["address", "name", "coverImage"]
-//     )
-// ) {
-//     @Field(tpye => String)
-//     categoryName : string;
-// }

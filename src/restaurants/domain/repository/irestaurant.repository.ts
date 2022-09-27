@@ -13,7 +13,7 @@ export interface IRestaurantRespository {
     // commit
     commitTransaction : () => Promise<boolean>;
     // findOne ( restaurantId, )
-    getOneRestaurantById : () => Promise<RestaurantEntity>;
+    getOneRestaurantById : (restaurantId : number) => Promise<RestaurantEntity>;
     // delete
     deleteRestaurant : ( restaurant : RestaurantEntity ) => Promise<boolean>;
     // count

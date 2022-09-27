@@ -1,7 +1,7 @@
 import { Test } from "@nestjs/testing";
 import { CategoryEntity } from "../../../restaurants/infra/db/entities/category.entity";
 import { RestaurantEntity } from "../../../restaurants/infra/db/entities/restaurant.entity";
-import { UserEntity, UserRole } from "src/users/infra/db/entities/user.entity";
+import { UserEntity, UserRole } from "../../../users/infra/db/entities/user.entity";
 import { RestaurantRepository } from "../../../restaurants/infra/db/repository/restaurant.repository";
 import { CategoryService } from "../service/category.service";
 import { CreateRestaurnatHandler } from "./create-restaurant.handler";
