@@ -33,7 +33,7 @@
 
 - 사용 프레임워크  
     - 프레임워크명 : NestJS
-    - 목적 : NodeJS 기반의 백엔드 어플리케이션 개발에서 spring framework와 유사하게 구조화 된 프레임워크를 제공. 요구사항을 구조적으로 구분하고, 각 기능별 관심사를 구분하여 코드를 편리하게 작성할 수 있다는 이점이 있어 채택함.
+    - 목적 : NodeJS 기반의 백엔드 어플리케이션 개발에서 spring framework와 유사하게 구조화 된 프레임워크를 제공. 요구사항을 `구조적으로 구분`하고, 각 기능별 `관심사를 구분`하여 코드를 편리하게 작성할 수 있다는 이점이 있어 채택함.
           
 - 사용 라이브러리 설명
 
@@ -41,7 +41,7 @@
     | --- | --- | --- |
     | @nestjs/apollo | 10.0.22 | graphQL을 사용하기 위한 목적으로 apollo 사용 |
     | apollo-server-express | 3.10.2 | 상동 |
-    | @nestjs/graphql | 10.1.0 | |
+    | @nestjs/graphql | 10.1.0 |  |
     | graphql | 16.6.0 | 상동 |
     | graphql-subscriptions | 2.0.0 | graphql에서 제공하는 websocket을 사용하기 위함 |
     | graphql-ws | 5.10.1 | 상동( 위 내용과 사용법이 다름 ) |
@@ -60,16 +60,78 @@
 <br/>
 
 ## 폴더 구조 설명
-
+```
+└── ./src
+    ├── ./src/auth
+    ├── ./src/common
+    │   ├── ./src/common/abstract-class
+    │   ├── ./src/common/class-decorator.ts
+    │   ├── ./src/common/dtos
+    │   ├── ./src/common/entities
+    │   └── ./src/common/method-decorator
+    ├── ./src/headth-check
+    ├── ./src/jwt
+    ├── ./src/mail
+    ├── ./src/orders
+    │   ├── ./src/orders/dtos
+    │   └── ./src/orders/entities
+    ├── ./src/payments
+    │   ├── ./src/payments/dtos
+    │   └── ./src/payments/entities
+    ├── ./src/restaurants
+    │   ├── ./src/restaurants/application
+    │   │   ├── ./src/restaurants/application/adapter
+    │   │   ├── ./src/restaurants/application/command
+    │   │   ├── ./src/restaurants/application/event
+    │   │   ├── ./src/restaurants/application/qeury
+    │   │   └── ./src/restaurants/application/service
+    │   ├── ./src/restaurants/domain
+    │   │   └── ./src/restaurants/domain/repository
+    │   ├── ./src/restaurants/infra
+    │   │   ├── ./src/restaurants/infra/adapter
+    │   │   └── ./src/restaurants/infra/db
+    │   │       ├── ./src/restaurants/infra/db/entities
+    │   │       └── ./src/restaurants/infra/db/repository
+    │   └── ./src/restaurants/interface
+    │       └── ./src/restaurants/interface/dtos
+    └── ./src/users
+        ├── ./src/users/application
+        │   ├── ./src/users/application/adapter
+        │   ├── ./src/users/application/command
+        │   ├── ./src/users/application/event
+        │   ├── ./src/users/application/query
+        │   └── ./src/users/application/service
+        ├── ./src/users/domain
+        │   └── ./src/users/domain/repository
+        ├── ./src/users/example
+        ├── ./src/users/infra
+        │   ├── ./src/users/infra/adapter
+        │   └── ./src/users/infra/db
+        │       ├── ./src/users/infra/db/entities
+        │       └── ./src/users/infra/db/repository
+        └── ./src/users/interface
+            └── ./src/users/interface/dtos
+```
 
 <br/>
 
 ## 과제 진행 시 주안점
+- 좋은 코드를 작성하고 싶었습니다.
+    - 클린 아키텍처를 위한 구조
+    - 객체지향 생활체조 원칙을 최대한 지켜가고자 노력함
+    - 관심사의 적절한 분리
+- TDD 적용 연습
+    - 테스트 코드가 어떻게 적용이 되면 좋을지 고민함
+- 운영환경
+    - 간단한 어플리케이션이라 비용을 최소화하는 방향으로 스택을 선정하고자 함
 
 
 <br/>
 
-## 한계점 및 개선 사항 작성
+## 개선 사항 작성
+- 관심사를 억지로 분리하면서 생긴 코드 정리 필요
+- 구분이 적절한지 피드백이 필요함
+- 테스트코드 개선 작업 
 
 <br/>
 
