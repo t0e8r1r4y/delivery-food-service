@@ -112,6 +112,19 @@
     - spring에서는 객체 생성부터 테스트 함수를 만들고, 실패하는 부분에서 객체를 생성하며 진행하지만 jest에서 그렇게 적용하기에 바로 에러가 발생해서 힘든 부분이 있었습니다.
     - 그리고 객체의 생성을 factory 패턴을 적용하게되면 해당 객체를 생성하는 부분에 대해서는 테스트 코드 작성을 하지 않을 수도 있습니다.
     - 다만 하나의 service.ts라는 파일에 정의 된 메서드들을 command와 query 디렉토리에서 메서드 별로 파일을 구분하였는데, 테스트 코드도 하나의 메서드별로 파일로 분리되기 때문에 메서드 실행 흐름을 주석 혹은 sudo 코드로 작성하고, 테스트 파일을 먼저 Mocking Data로 테스트 후 로직을 작성하고 결론을 낼 수 있는 장점이 있었습니다.
+        ```
+          @TryCatchService('/EditRestaurantHandler/execute')
+          async execute(command: EditRestaurantCommand): Promise<EditRestaurantOutput> {
+              // sudo 코드 선작성 후 '해당파일'.spec.ts에서 테스트 작성 가능
+              const { restaurantId, authOwner } = command;
+              // 수정할 레스토랑 찾기
+              // 레스토랑과 입력으로 받은 주인이 동일한 id인지 확인
+              // 수정 값 반영
+              // 수정 값 저장
+
+              return { ok: true, };
+          }
+        ```
 - 운영환경
     - 간단한 어플리케이션이라 비용을 최소화하는 방향으로 스택을 선정하고자 함
 
