@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prebuild": "rimraf dist",
+    "prebuild": "rimraf dist && rimraf *.tsbuildinfo",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "cross-env NODE_ENV=prod nest start",
@@ -18,7 +18,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "NODE_ENV=test jest --config ./test/jest-e2e.json"
+    "test:e2e": "NODE_ENV=test jest --config ./test/jest-e2e.json",
+    "deploy": "npm ci && npm run build && npm run start:prod"
   },
   "dependencies": {
     "@nestjs/apollo": "^10.0.22",
