@@ -29,7 +29,32 @@
 
 <br/>
 
-## 사용한 프레임워크 및 라이브러리 설명
+## 사용한 프레임워크 및 라이브러리 설명  
+
+- 사용 프레임워크  
+    - 프레임워크명 : NestJS
+    - 목적 : NodeJS 기반의 백엔드 어플리케이션 개발에서 spring framework와 유사하게 구조화 된 프레임워크를 제공. 요구사항을 구조적으로 구분하고, 각 기능별 관심사를 구분하여 코드를 편리하게 작성할 수 있다는 이점이 있어 채택함.
+          
+- 사용 라이브러리 설명
+
+    | 라이브러리명 | 버전 | 설명 |
+    | --- | --- | --- |
+    | @nestjs/apollo | 10.0.22 | graphQL을 사용하기 위한 목적으로 apollo 사용 |
+    | apollo-server-express | 3.10.2 | 상동 |
+    | @nestjs/graphql | 10.1.0 | |
+    | graphql | 16.6.0 | 상동 |
+    | graphql-subscriptions | 2.0.0 | graphql에서 제공하는 websocket을 사용하기 위함 |
+    | graphql-ws | 5.10.1 | 상동( 위 내용과 사용법이 다름 ) |
+    | @nestjs/cqrs | 9.0.1 | 관심사를 구분하여 읽기과 쓰기 영역을 구분하기 위함 |
+    | @nestjs/schedule | 2.1.0 | 크론잡이나 스케쥴링 관련 작업을 수행하기 위함 |
+    | @nestjs/typeorm | 9.0.1 | TypeScript ORM 구현체 |
+    | typeorm | 0.3.9 | 상동 |
+    | pg | 8.8.0 | progresql 데이터베이스 드라이버 | 
+    | bcrypt | 5.0.1 | 비밀번호 암호화 라이브러리 |
+    | joi | 17.6.0 | 환경변수값에 대한 벨리데이션 목적 |
+    | uuid | 8.3.2 | 고유 id를 부여하기 위한 목적 |
+    | got | 11.8.3 | http 요청 라이브러리 - mailgun 서버에 요청 코드 작성 목적 |
+    | form-data | 4.0.0 | mailgun 서버에 제공하는 포맷을 가공하기 위한 목적 |
 
 
 <br/>
