@@ -39,8 +39,70 @@
 ## 과제 진행 시 주안점
 - 좋은 코드를 작성하고 싶었습니다.
     - 클린 아키텍처를 위한 구조
+       ```
+          ├── ./src/restaurants
+          │   ├── ./src/restaurants/application
+          │   │   ├── ./src/restaurants/application/adapter
+          │   │   ├── ./src/restaurants/application/command
+          │   │   ├── ./src/restaurants/application/event
+          │   │   ├── ./src/restaurants/application/qeury
+          │   │   └── ./src/restaurants/application/service
+          │   ├── ./src/restaurants/domain
+          │   │   └── ./src/restaurants/domain/repository
+          │   ├── ./src/restaurants/infra
+          │   │   ├── ./src/restaurants/infra/adapter
+          │   │   └── ./src/restaurants/infra/db
+          │   │       ├── ./src/restaurants/infra/db/entities
+          │   │       └── ./src/restaurants/infra/db/repository
+          │   └── ./src/restaurants/interface
+          │       └── ./src/restaurants/interface/dtos
+       ```
+       - infra -> interface -> application -> domain 로 디렉터리를 구분함
+       - 의존성의 방향이 한 방향으로 흐르도록함
     - 객체지향 생활체조 원칙을 최대한 지켜가고자 노력함
+       - method decorator를 사용하여 가급적 한 메서드에 한 단계의 들여쓰기를 유지하려고 했습니다.
+       - 또한 else 예약어를 사용하지 않을 수 있었습니다.
+       - this를 제외하고 한 줄에 하나의 .을 찍도록 코드를 작성하였습니다.
+        ![스크린샷 2022-09-30 오전 2 52 24](https://user-images.githubusercontent.com/91730236/193106269-714134e8-971d-4f45-b5a3-bfe62e2b1071.png)
+        
+       - 가급적 모든 엔티티를 작게 유지하기 위해서 아래 클래스를 extends하여 엔티티를 작성하였습니다. 또한 데이터 검증과 관련해서는 dto에 데코레이터를 추가하였습니다.
+       
+             ```
+                  export class CoreEntity {
+                      @PrimaryGeneratedColumn()
+                      @Field(type => Number)
+                      id : number;
+
+                      @CreateDateColumn()
+                      @Field(type => Date)
+                      createdAt : Date;
+
+                      @UpdateDateColumn()
+                      @Field(type => Date)
+                      updatedAt : Date;
+                  }
+
+                  @Entity('verification')
+                  export class VerificationEntity extends CoreEntity{
+
+                      @Column()
+                      @Field(type => String)
+                      code : string;
+
+                      @OneToOne(tpye => UserEntity, {onDelete: "CASCADE"})
+                      @JoinColumn()
+                      user : UserEntity;
+
+                      @BeforeInsert()
+                      createCode() : void {
+                          this.code = uuidv4();
+                      }
+                  }
+             ```
+       - 3개 이상의 인스턴스 변수를 사용하지 않기 위해 코드를 정리하였습니다.
+
     - 관심사의 적절한 분리
+       - ㅇ
 - TDD 적용 연습
     - 테스트 코드가 어떻게 적용이 되면 좋을지 고민함
 - 운영환경
@@ -52,7 +114,7 @@
 ## 개선 사항 작성
 - 관심사를 억지로 분리하면서 생긴 코드 정리 필요
 - 구분이 적절한지 피드백이 필요함
-- 테스트코드 개선 작업 
+- 객체지향 생활체조 원칙을 spring 기반으로 학습하다보니, 상대적으로 nestjs에서 적용이 미숙함.
 
 <br/>
 
