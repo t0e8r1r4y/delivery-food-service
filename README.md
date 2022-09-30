@@ -1,10 +1,46 @@
 # Delivery-food-service
-
+```
+ Feedback을 받으며 Refactoring 중입니다. 요구사항에 대한 기능은 구현하였으며, 현재 Local 환경 실행만 가능합니다.
+```
 ## 관련 기술 정리 링크
-- 개발 환경 : [TypeScript/NestJS][TS_LINK], GraphQL, TypeORM
-- 운영 환경 : 
+- 개발 환경 : [TypeScript/NestJS][TS_LINK], [GraphQL][GRAPHQL_LINK], TypeORM
+- 운영 환경 : AWS EC2 & RDS -> [Elastic BeansTalk][EB_LINK]로 전환 진행 중
 
 ## 설치, 환경설정 및 실행 방법
+- 사전 세팅
+    - MailGun 서비스 사용이 가능하도록 회원가입을 하고 Key, API Key, Domain name, FROM Email 정보를 환경변수에 등록한다.
+    - PostgreSQL을 설치한다. ( AWS 환경에서는 RDS 세팅을 동시에 진행함 )
+- AWS Elastic BeansTalk
+    ```
+     (전환 중)
+    ```
+- Local 실행
+    ```
+     # 해당 레포지토리 복제
+     git clone https://github.com/t0e8r1r4y/delivery-food-service.git
+     
+     npm install
+    ```
+    - root 경로에 .env.dev 파일을 생성하고 DB, MAIL GUN 관련 정보를 등록한다.
+    ```
+     DB_HOST: 
+     DB_PORT: 
+     DB_USERNAME=
+     DB_PASSWORD=
+     DB_NAME=
+     PRIVATE_KEY=
+     MAILGUN_API_KEY=
+     MAILGUN_DOMAIN_NAME=
+     MAILGUN_FROM_EMAIL=
+    ```
+    - 프로그램을 실행한다.
+    ```
+     npm run start:dev
+    ```
+    - 아래 url로 graphQL playground에서 정보를 요청함
+    ```
+     http://localhost:4000/graphql
+    ```
 
 ## 구현 요구 사항 목록
 - 기능적 요구사항
@@ -26,6 +62,7 @@
 - 비기능적 요구사항 ( 트랜잭션 )
 
       1. 계정이 정상적으로 생성되지 못하는 경우 이메일 인증 정보는 제거되어야 한다.
+      2. 레스토랑이 삭제 되더라도 카테고리 정보는 제거되지 않는다.
 
 <br/>
 
@@ -107,6 +144,18 @@
             '@nestjs/cqrs';
        ```
        - 이 부분을 나눠야겠다고 생각한 이유는 service를 구현할 때 read와 write를 구분하는 이유는 상호 종속성을 배제하기 위함입니다.
+       
+ 
+<br/>
+
+- Transaction 처리
+    - Spring과 달리 공식 홈페이지에서 `Transaction 데코레이터 사용을 권장하지 않습니다`.
+    - Repository를 사용하여 service.ts에서 구현되는 로직의 중복 사용을 방지하기 위하여, customRepository를 구현하여 정리하였습니다.
+    - Lock 매커니즘과 관련하여 낙관적 Lock을 적용하여 수동으로 rollback하도록 로직을 구현하였습니다.
+
+
+<br/>       
+       
 - TDD 적용 연습
     - 테스트 코드가 어떻게 적용이 되면 좋을지 고민하였는데, 테스트도 로직이 분리된 만큼 분리되기에 내용을 파악하는데 더 유용하다고 생각했습니다.
     - spring에서는 객체 생성부터 테스트 함수를 만들고, 실패하는 부분에서 객체를 생성하며 진행하지만 jest에서 그렇게 적용하기에 바로 에러가 발생해서 힘든 부분이 있었습니다.
@@ -125,8 +174,11 @@
               return { ok: true, };
           }
         ```
+<br/>
+
 - 운영환경
-    - 간단한 어플리케이션이라 비용을 최소화하는 방향으로 스택을 선정하고자 함
+    - 간단한 어플리케이션을 리팩토링 할 경우가 많고, 운영환경에서 테스트 방법을 고민해보기 위해서 배포의 편의성이 중요하다고 생각했습니다.
+    - git repository에 push하면 codepipeline을 통해 자동배포를 하고자 하였습니다.
 
 
 <br/>
@@ -223,3 +275,5 @@
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
    [TS_LINK]: <https://github.com/t0e8r1r4y/blogContents/tree/main/DEV/ts>
+   [GRAPHQL_LINK]: <https://github.com/t0e8r1r4y/blogContents/blob/main/GraphQL/Apollo.md>
+   [EB_LINK]: <https://github.com/t0e8r1r4y/container-and-k8s-aws/blob/main/AWS/EB.md>
