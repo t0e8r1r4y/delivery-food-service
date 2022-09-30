@@ -88,111 +88,114 @@
 
 
 ## 과제 진행 시 주안점
-- 좋은 코드를 작성하고 싶었습니다.
-    - 클린 아키텍처를 위한 구조
-       ```
-          ├── ./src/restaurants
-          │   ├── ./src/restaurants/application
-          │   │   ├── ./src/restaurants/application/adapter
-          │   │   ├── ./src/restaurants/application/command
-          │   │   ├── ./src/restaurants/application/event
-          │   │   ├── ./src/restaurants/application/qeury
-          │   │   └── ./src/restaurants/application/service
-          │   ├── ./src/restaurants/domain
-          │   │   └── ./src/restaurants/domain/repository
-          │   ├── ./src/restaurants/infra
-          │   │   ├── ./src/restaurants/infra/adapter
-          │   │   └── ./src/restaurants/infra/db
-          │   │       ├── ./src/restaurants/infra/db/entities
-          │   │       └── ./src/restaurants/infra/db/repository
-          │   └── ./src/restaurants/interface
-          │       └── ./src/restaurants/interface/dtos
-       ```
-       - infra -> interface -> application -> domain 로 디렉터리를 구분하였습니다.
-       - 의존성의 방향이 한 방향으로 흐르도록 하였습니다.
-    - 객체지향 생활체조 원칙을 최대한 지켜가고자 노력하였습니다.
-       - method decorator를 사용하여 가급적 한 메서드에 한 단계의 들여쓰기를 유지하려고 했습니다.
-       - 또한 else 예약어를 사용하지 않을 수 있었습니다.
-       - this를 제외하고 한 줄에 하나의 .을 찍도록 코드를 작성하였습니다.
-        ![스크린샷 2022-09-30 오전 2 52 24](https://user-images.githubusercontent.com/91730236/193106269-714134e8-971d-4f45-b5a3-bfe62e2b1071.png)
-        
-       - 가급적 모든 엔티티를 작게 유지하기 위해서 아래 클래스를 extends하여 엔티티를 작성하였습니다. 또한 데이터 검증과 관련해서는 dto에 데코레이터를 추가하였습니다.
-       
-             ```
-                  export class CoreEntity {
-                      @PrimaryGeneratedColumn()
-                      @Field(type => Number)
-                      id : number;
+####  :one: 좋은 코드를 작성하고 싶었습니다.
+- 클린 아키텍처를 위한 구조
+```
+   ├── ./src/restaurants
+   │   ├── ./src/restaurants/application
+   │   │   ├── ./src/restaurants/application/adapter
+   │   │   ├── ./src/restaurants/application/command
+   │   │   ├── ./src/restaurants/application/event
+   │   │   ├── ./src/restaurants/application/qeury
+   │   │   └── ./src/restaurants/application/service
+   │   ├── ./src/restaurants/domain
+   │   │   └── ./src/restaurants/domain/repository
+   │   ├── ./src/restaurants/infra
+   │   │   ├── ./src/restaurants/infra/adapter
+   │   │   └── ./src/restaurants/infra/db
+   │   │       ├── ./src/restaurants/infra/db/entities
+   │   │       └── ./src/restaurants/infra/db/repository
+   │   └── ./src/restaurants/interface
+   │       └── ./src/restaurants/interface/dtos
+```
+- infra -> interface -> application -> domain 로 디렉터리를 구분하였습니다.
+- 의존성의 방향이 한 방향으로 흐르도록 하였습니다.
 
-                      @CreateDateColumn()
-                      @Field(type => Date)
-                      createdAt : Date;
+<br/>
 
-                      @UpdateDateColumn()
-                      @Field(type => Date)
-                      updatedAt : Date;
-                  }
+####  :two: 객체지향 생활체조 원칙을 최대한 지켜가고자 노력하였습니다.
+- method decorator를 사용하여 가급적 한 메서드에 한 단계의 들여쓰기를 유지하려고 했습니다.
+- 또한 else 예약어를 사용하지 않을 수 있었습니다.
+- this를 제외하고 한 줄에 하나의 .을 찍도록 코드를 작성하였습니다.
+ ![스크린샷 2022-09-30 오전 2 52 24](https://user-images.githubusercontent.com/91730236/193106269-714134e8-971d-4f45-b5a3-bfe62e2b1071.png)
 
-                  @Entity('verification')
-                  export class VerificationEntity extends CoreEntity{
+- 가급적 모든 엔티티를 작게 유지하기 위해서 아래 클래스를 extends하여 엔티티를 작성하였습니다. 또한 데이터 검증과 관련해서는 dto에 데코레이터를 추가하였습니다.
 
-                      @Column()
-                      @Field(type => String)
-                      code : string;
+      ```
+           export class CoreEntity {
+               @PrimaryGeneratedColumn()
+               @Field(type => Number)
+               id : number;
 
-                      @OneToOne(tpye => UserEntity, {onDelete: "CASCADE"})
-                      @JoinColumn()
-                      user : UserEntity;
+               @CreateDateColumn()
+               @Field(type => Date)
+               createdAt : Date;
 
-                      @BeforeInsert()
-                      createCode() : void {
-                          this.code = uuidv4();
-                      }
-                  }
-             ```
-       - 3개 이상의 인스턴스 변수를 사용하지 않기 위해 코드를 정리하였습니다.
+               @UpdateDateColumn()
+               @Field(type => Date)
+               updatedAt : Date;
+           }
 
-    - 관심사의 적절한 분리
-       - nestJS 프레임워크에는 CQRS 적용을 위한 라이브러리가 존재합니다.
-       ```
-            '@nestjs/cqrs';
-       ```
-       - 이 부분을 나눠야겠다고 생각한 이유는 service를 구현할 때 read와 write를 구분하는 이유는 상호 종속성을 배제하기 위함입니다.
+           @Entity('verification')
+           export class VerificationEntity extends CoreEntity{
+
+               @Column()
+               @Field(type => String)
+               code : string;
+
+               @OneToOne(tpye => UserEntity, {onDelete: "CASCADE"})
+               @JoinColumn()
+               user : UserEntity;
+
+               @BeforeInsert()
+               createCode() : void {
+                   this.code = uuidv4();
+               }
+           }
+      ```
+- 3개 이상의 인스턴스 변수를 사용하지 않기 위해 코드를 정리하였습니다.
+
+#### :three: 관심사의 적절한 분리
+- nestJS 프레임워크에는 CQRS 적용을 위한 라이브러리가 존재합니다.
+```
+     '@nestjs/cqrs';
+```
+- 이 부분을 나눠야겠다고 생각한 이유는 service를 구현할 때 read와 write를 구분하는 이유는 상호 종속성을 배제하기 위함입니다.
        
  
 <br/>
 
-- Transaction 처리
-    - Spring과 달리 공식 홈페이지에서 `Transaction 데코레이터 사용을 권장하지 않습니다`.
-    - Repository를 사용하여 service.ts에서 구현되는 로직의 중복 사용을 방지하기 위하여, customRepository를 구현하여 정리하였습니다.
-    - Lock 매커니즘과 관련하여 낙관적 Lock을 적용하여 수동으로 rollback하도록 로직을 구현하였습니다.
+#### :four: Transaction 처리
+- Spring과 달리 공식 홈페이지에서 `Transaction 데코레이터 사용을 권장하지 않습니다`.
+- Repository를 사용하여 service.ts에서 구현되는 로직의 중복 사용을 방지하기 위하여, customRepository를 구현하여 정리하였습니다.
+- Lock 매커니즘과 관련하여 낙관적 Lock을 적용하여 수동으로 rollback하도록 로직을 구현하였습니다.
 
 
 <br/>       
        
-- TDD 적용 연습
-    - 테스트 코드가 어떻게 적용이 되면 좋을지 고민하였는데, 테스트도 로직이 분리된 만큼 분리되기에 내용을 파악하는데 더 유용하다고 생각했습니다.
-    - spring에서는 객체 생성부터 테스트 함수를 만들고, 실패하는 부분에서 객체를 생성하며 진행하지만 jest에서 그렇게 적용하기에 바로 에러가 발생해서 힘든 부분이 있었습니다.
-    - 그리고 객체의 생성을 factory 패턴을 적용하게되면 해당 객체를 생성하는 부분에 대해서는 테스트 코드 작성을 하지 않을 수도 있습니다.
-    - 다만 하나의 service.ts라는 파일에 정의 된 메서드들을 command와 query 디렉토리에서 메서드 별로 파일을 구분하였는데, 테스트 코드도 하나의 메서드별로 파일로 분리되기 때문에 메서드 실행 흐름을 주석 혹은 sudo 코드로 작성하고, 테스트 파일을 먼저 Mocking Data로 테스트 후 로직을 작성하고 결론을 낼 수 있는 장점이 있었습니다.
-        ```
-          @TryCatchService('/EditRestaurantHandler/execute')
-          async execute(command: EditRestaurantCommand): Promise<EditRestaurantOutput> {
-              // sudo 코드 선작성 후 '해당파일'.spec.ts에서 테스트 작성 가능
-              const { restaurantId, authOwner } = command;
-              // 수정할 레스토랑 찾기
-              // 레스토랑과 입력으로 받은 주인이 동일한 id인지 확인
-              // 수정 값 반영
-              // 수정 값 저장
+#### :five: TDD 적용 연습
+- 테스트 코드가 어떻게 적용이 되면 좋을지 고민하였는데, 테스트도 로직이 분리된 만큼 분리되기에 내용을 파악하는데 더 유용하다고 생각했습니다.
+- spring에서는 객체 생성부터 테스트 함수를 만들고, 실패하는 부분에서 객체를 생성하며 진행하지만 jest에서 그렇게 적용하기에 바로 에러가 발생해서 힘든 부분이 있었습니다.
+- 그리고 객체의 생성을 factory 패턴을 적용하게되면 해당 객체를 생성하는 부분에 대해서는 테스트 코드 작성을 하지 않을 수도 있습니다.
+- 다만 하나의 service.ts라는 파일에 정의 된 메서드들을 command와 query 디렉토리에서 메서드 별로 파일을 구분하였는데, 테스트 코드도 하나의 메서드별로 파일로 분리되기 때문에 메서드 실행 흐름을 주석 혹은 sudo 코드로 작성하고, 테스트 파일을 먼저 Mocking Data로 테스트 후 로직을 작성하고 결론을 낼 수 있는 장점이 있었습니다.
+    ```
+      @TryCatchService('/EditRestaurantHandler/execute')
+      async execute(command: EditRestaurantCommand): Promise<EditRestaurantOutput> {
+          // sudo 코드 선작성 후 '해당파일'.spec.ts에서 테스트 작성 가능
+          const { restaurantId, authOwner } = command;
+          // 수정할 레스토랑 찾기
+          // 레스토랑과 입력으로 받은 주인이 동일한 id인지 확인
+          // 수정 값 반영
+          // 수정 값 저장
 
-              return { ok: true, };
-          }
-        ```
+          return { ok: true, };
+      }
+    ```
 <br/>
 
-- 운영환경
-    - 간단한 어플리케이션을 리팩토링 할 경우가 많고, 운영환경에서 테스트 방법을 고민해보기 위해서 배포의 편의성이 중요하다고 생각했습니다.
-    - git repository에 push하면 codepipeline을 통해 자동배포를 하고자 하였습니다.
+#### :six: 운영환경
+- 간단한 어플리케이션을 리팩토링 할 경우가 많고, 운영환경에서 테스트 방법을 고민해보기 위해서 배포의 편의성이 중요하다고 생각했습니다.
+- git repository에 push하면 codepipeline을 통해 자동배포를 하고자 하였습니다.
 
 
 <br/>
