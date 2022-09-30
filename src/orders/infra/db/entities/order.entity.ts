@@ -18,7 +18,7 @@ registerEnumType( OrderStatus, {name: 'OrderStatus'} );
 
 @InputType('OrderInputType', { isAbstract: true } )
 @ObjectType()
-@Entity()
+@Entity('order')
 export class Order extends CoreEntity {
     
     @Field(type => UserEntity, {nullable: true})

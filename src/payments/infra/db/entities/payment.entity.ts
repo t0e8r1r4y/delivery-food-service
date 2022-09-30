@@ -6,7 +6,7 @@ import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 
 @InputType('PaymentInputType', { isAbstract: true })
 @ObjectType()
-@Entity()
+@Entity('payment')
 export class PaymentEntity extends CoreEntity {
   @Field(type => String)
   @Column()

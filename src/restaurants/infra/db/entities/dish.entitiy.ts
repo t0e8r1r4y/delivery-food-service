@@ -29,7 +29,7 @@ export class DishOption {
 
 @InputType('DishInputType', {isAbstract:true})
 @ObjectType()
-@Entity()
+@Entity('dish')
 export class DishEntity extends CoreEntity {
 
     @Field(type => String)

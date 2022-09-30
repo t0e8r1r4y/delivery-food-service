@@ -10,7 +10,7 @@ import { type } from "os";
 // 테스트는 graphql, database, validation을 위한 3번 테스트가 필요함
 @InputType( 'CategoryInputType'  ,{isAbstract:true})
 @ObjectType()   // for graphQL
-@Entity()       // for typeORM
+@Entity('category')       // for typeORM
 export class CategoryEntity extends CoreEntity {
     
     // describe restaurant side of graphQL

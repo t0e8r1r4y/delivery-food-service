@@ -14,7 +14,7 @@ export class OrderItemOption {
 
 @InputType('OrderItemInputType', {isAbstract:true})
 @ObjectType()
-@Entity()
+@Entity('orderitem')
 export class OrderItem extends CoreEntity {
     
     @Field(type => DishEntity)
