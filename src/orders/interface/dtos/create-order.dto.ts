@@ -12,7 +12,6 @@ class CreateOrderItemInput{
 }
 
 @InputType()
-// export class CreateOrderInput extends PickType(Order, ['items']) {
 export class CreateOrderInput {
     @Field(type=> Int)
     restaurantId: number;

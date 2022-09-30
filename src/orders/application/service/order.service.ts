@@ -64,7 +64,6 @@ export class OrderService {
                     }
                 }
 
-                // console.log(dish.options);
                 let dishFinalPrice = dish.price;
 
                 // @TODO - 도메인 로직에서 2중 반복문은 복잡도가 매우 높아짐. -> 분리 필요
@@ -74,9 +73,7 @@ export class OrderService {
                     );
 
                     if(dishOption) {
-                        // console.log(itemOption.name);
                         if(dishOption.extra) {
-                            // console.log(`USD + ${dishOption.extra}`);
                             dishFinalPrice += dishOption.extra;
                         } else {
                             const dishOptionChoice = dishOption.choices.find(
@@ -85,7 +82,6 @@ export class OrderService {
                             
                             if(dishOptionChoice){
                                 if(dishOptionChoice.extra) {
-                                    // console.log(`USD + ${dishOptionChoice.extra}`);
                                     dishFinalPrice += dishOptionChoice.extra;
                                 }
                             }
@@ -103,28 +99,6 @@ export class OrderService {
                 );
                 orderItems.push(orderItem);
             }
-
-            // console.log(orderFinalPrice);
-            // createOrderInput.items.forEach( async item => { // 해당 로직을 사용하면 resolver에서 reteurn을 인지 못함
-            //     // console.log(item);
-            //     const dish = await this.dishes.findOne({
-            //         where : {
-            //             id : item.dishId,
-            //         }
-            //     });
-
-            //     if(!dish) {
-            //         // abort this while thing
-            //         return { ok: false, error: "주문하고자 하는 음식을 찾지 못했습니다. "};
-            //     }
-
-            //     await this.orderItems.save(
-            //         this.orderItems.create({
-            //             dish,
-            //             options : item.options,
-            //         })
-            //     );
-            // });
 
             const order = await this.orders.save(
                 this.orders.create({

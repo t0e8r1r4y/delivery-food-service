@@ -4,10 +4,10 @@ import { Role } from "../../auth/role.decorator";
 import { UserEntity } from "../../users/infra/db/entities/user.entity";
 import { CreatePaymentInput, CreatePaymentOutput } from "./dtos/create-payment.dto";
 import { GetPaymentOutput } from "./dtos/get-payment.dto";
-import { Payment } from "../infra/db/entities/payment.entity";
-import { PaymentService } from "../application/payments.service";
+import { PaymentEntity } from "../infra/db/entities/payment.entity";
+import { PaymentService } from "../application/service/payments.service";
 
-@Resolver(of => Payment)
+@Resolver(of => PaymentEntity)
 export class PaymentResolver {
     constructor(
         private readonly paymentService : PaymentService

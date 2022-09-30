@@ -1,18 +1,18 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { UserEntity } from "../../users/infra/db/entities/user.entity";
+import { UserEntity } from "../../../users/infra/db/entities/user.entity";
 import { LessThan, Repository } from "typeorm";
-import { CreatePaymentInput, CreatePaymentOutput } from "../interface/dtos/create-payment.dto";
-import { Payment } from "../infra/db/entities/payment.entity";
-import { RestaurantEntity } from "../../restaurants/infra/db/entities/restaurant.entity";
-import { GetPaymentOutput } from "../interface/dtos/get-payment.dto";
-import { Cron,Interval } from '@nestjs/schedule';
+import { CreatePaymentInput, CreatePaymentOutput } from "../../interface/dtos/create-payment.dto";
+import { PaymentEntity } from "../../infra/db/entities/payment.entity";
+import { RestaurantEntity } from "../../../restaurants/infra/db/entities/restaurant.entity";
+import { GetPaymentOutput } from "../../interface/dtos/get-payment.dto";
+import { Interval } from '@nestjs/schedule';
 
 @Injectable()
 export class PaymentService {
     constructor(
-        @InjectRepository(Payment)
-        private readonly payments : Repository<Payment>,
+        @InjectRepository(PaymentEntity)
+        private readonly payments : Repository<PaymentEntity>,
         @InjectRepository(RestaurantEntity)
         private readonly restaurants : Repository<RestaurantEntity>
     ) {}

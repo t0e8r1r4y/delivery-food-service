@@ -8,7 +8,7 @@ import { OrderService } from "../application/service/order.service";
 import { GetOrdersInput, GetOrdersOutput } from "./dtos/get-orders.dto";
 import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
 import { EditOrderInput, EditOrderOutput } from "./dtos/edit-order.dto";
-import {PubSub} from "graphql-subscriptions";
+import { PubSub } from "graphql-subscriptions";
 import { Inject } from "@nestjs/common";
 import { NEW_COOKED_ORDER, NEW_ORDER_UPDATE, NEW_PENDING_ORDER, PUB_SUB } from "../../common/common.constants";
 import { OrderUpdatesInput } from "./dtos/order-updates.dto";
@@ -64,7 +64,6 @@ export class OrderResolver {
             return ownerId === context.user.id;
         },
         resolve : ({pendingOrder : {order}}) => {
-            // console.log(order);
             return order;
         },
     })
@@ -79,7 +78,6 @@ export class OrderResolver {
         return this.pubSub.asyncIterator(NEW_COOKED_ORDER);
     }
 
-    // 해당 주문과 관련된 모든 유저들이 정보를 전달 받을 수 있어야 함
     @Subscription(returns => Order, {
         filter : (
             { orderUpdates: order} : {orderUpdates : Order},
@@ -111,40 +109,4 @@ export class OrderResolver {
         return this.ordersService.takeOrder(driver,takeOrderInput);
     } 
 
-
-/*
-// 테스트 코드
-    // 주문을 업데이트하면 이벤트 발생을 알린다.
-    @Mutation(returns => Boolean)
-    async potatoReady(
-        @Args('trigId') trigId : number,
-    ) {
-        this.pubSub.publish('trig', {
-            orderSubscription : trigId,
-            // orderSubscription: 'test ok. I can do it.',
-        });
-        return true;
-    }
-
-    @Subscription(returns => String, {
-        // 말그대로 걸러준다.
-        filter : (payload, variables) => {
-            // console.log(payload, variables);
-            return payload.orderSubscription === variables.trigId;
-        },
-        // 걸러진 값에서 보여주고 싶은 값으로 변환을 하여 최종적으로 asyncIterator하도록 한다.
-        resolve : (payload, args, context, info) => {
-            console.log(payload);
-            return  `Test ${payload.orderSubscription} is right?`;
-        },
-    })
-    @Role(['Any'])
-    orderSubscription(
-        // @AuthUser() user : User
-        @Args('trigId') trigId : number,
-    ) {
-        // console.log(user);
-        return this.pubSub.asyncIterator('trig');
-    }
-*/
 }
