@@ -121,38 +121,38 @@
 
 - 가급적 모든 엔티티를 작게 유지하기 위해서 아래 클래스를 extends하여 엔티티를 작성하였습니다. 또한 데이터 검증과 관련해서는 dto에 데코레이터를 추가하였습니다.
 
-      ```
-           export class CoreEntity {
-               @PrimaryGeneratedColumn()
-               @Field(type => Number)
-               id : number;
+```javascript
+     export class CoreEntity {
+         @PrimaryGeneratedColumn()
+         @Field(type => Number)
+         id : number;
 
-               @CreateDateColumn()
-               @Field(type => Date)
-               createdAt : Date;
+         @CreateDateColumn()
+         @Field(type => Date)
+         createdAt : Date;
 
-               @UpdateDateColumn()
-               @Field(type => Date)
-               updatedAt : Date;
-           }
+         @UpdateDateColumn()
+         @Field(type => Date)
+         updatedAt : Date;
+     }
 
-           @Entity('verification')
-           export class VerificationEntity extends CoreEntity{
+     @Entity('verification')
+     export class VerificationEntity extends CoreEntity{
 
-               @Column()
-               @Field(type => String)
-               code : string;
+         @Column()
+         @Field(type => String)
+         code : string;
 
-               @OneToOne(tpye => UserEntity, {onDelete: "CASCADE"})
-               @JoinColumn()
-               user : UserEntity;
+         @OneToOne(tpye => UserEntity, {onDelete: "CASCADE"})
+         @JoinColumn()
+         user : UserEntity;
 
-               @BeforeInsert()
-               createCode() : void {
-                   this.code = uuidv4();
-               }
-           }
-      ```
+         @BeforeInsert()
+         createCode() : void {
+             this.code = uuidv4();
+         }
+     }
+```
 - 3개 이상의 인스턴스 변수를 사용하지 않기 위해 코드를 정리하였습니다.
 
 #### :three: 관심사의 적절한 분리
@@ -178,19 +178,19 @@
 - spring에서는 객체 생성부터 테스트 함수를 만들고, 실패하는 부분에서 객체를 생성하며 진행하지만 jest에서 그렇게 적용하기에 바로 에러가 발생해서 힘든 부분이 있었습니다.
 - 그리고 객체의 생성을 factory 패턴을 적용하게되면 해당 객체를 생성하는 부분에 대해서는 테스트 코드 작성을 하지 않을 수도 있습니다.
 - 다만 하나의 service.ts라는 파일에 정의 된 메서드들을 command와 query 디렉토리에서 메서드 별로 파일을 구분하였는데, 테스트 코드도 하나의 메서드별로 파일로 분리되기 때문에 메서드 실행 흐름을 주석 혹은 sudo 코드로 작성하고, 테스트 파일을 먼저 Mocking Data로 테스트 후 로직을 작성하고 결론을 낼 수 있는 장점이 있었습니다.
-    ```
-      @TryCatchService('/EditRestaurantHandler/execute')
-      async execute(command: EditRestaurantCommand): Promise<EditRestaurantOutput> {
-          // sudo 코드 선작성 후 '해당파일'.spec.ts에서 테스트 작성 가능
-          const { restaurantId, authOwner } = command;
-          // 수정할 레스토랑 찾기
-          // 레스토랑과 입력으로 받은 주인이 동일한 id인지 확인
-          // 수정 값 반영
-          // 수정 값 저장
+```javascript
+  @TryCatchService('/EditRestaurantHandler/execute')
+  async execute(command: EditRestaurantCommand): Promise<EditRestaurantOutput> {
+      // sudo 코드 선작성 후 '해당파일'.spec.ts에서 테스트 작성 가능
+      const { restaurantId, authOwner } = command;
+      // 수정할 레스토랑 찾기
+      // 레스토랑과 입력으로 받은 주인이 동일한 id인지 확인
+      // 수정 값 반영
+      // 수정 값 저장
 
-          return { ok: true, };
-      }
-    ```
+      return { ok: true, };
+  }
+```
 <br/>
 
 #### :six: 운영환경
