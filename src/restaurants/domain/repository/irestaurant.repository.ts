@@ -21,6 +21,6 @@ export interface IRestaurantRespository {
     // find ( 조건 )
     getRestaurantBySlug : () => Promise<RestaurantEntity[]>;
     // findAndCount
-    getAllRestaurant : () => Promise<[RestaurantEntity[], number]>;
+    getAllRestaurant : ( page : number ) => Promise<[RestaurantEntity[], number]>;
 
 }

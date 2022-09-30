@@ -14,6 +14,14 @@ export class SearchRestaurantByNameHandler implements IQueryHandler<SearchRestau
     async execute(
         query: SearchRestaurantByName
     ): Promise<SearchRestaurantOutput> {
-        return;
+        const { qeury, page } = query;
+        const [restaurants, totalResults] = await this.restaurantRepository.searchRestaurantByName(qeury, page);
+        
+        return {
+            ok : true,
+            restaurants,
+            totalResults,
+            totalPages : Math.ceil(totalResults/25),
+        }
     }
 }

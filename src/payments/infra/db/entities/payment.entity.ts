@@ -7,7 +7,7 @@ import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 @InputType('PaymentInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
-export class Payment extends CoreEntity {
+export class PaymentEntity extends CoreEntity {
   @Field(type => String)
   @Column()
   transactionId: string;
@@ -19,7 +19,7 @@ export class Payment extends CoreEntity {
   )
   user: UserEntity;
 
-  @RelationId((payment: Payment) => payment.user)
+  @RelationId((payment: PaymentEntity) => payment.user)
   userId: number;
 
   @Field(type => RestaurantEntity)
@@ -27,6 +27,6 @@ export class Payment extends CoreEntity {
   restaurant: RestaurantEntity;
 
   @Field(type => Int)
-  @RelationId((payment: Payment) => payment.restaurant)
+  @RelationId((payment: PaymentEntity) => payment.restaurant)
   restaurantId: number;
 }

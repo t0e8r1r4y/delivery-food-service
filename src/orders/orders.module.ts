@@ -8,7 +8,8 @@ import { OrderService } from './application/service/order.service';
 import { OrderResolver } from './interface/orders.resolver';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Order, RestaurantEntity, OrderItem, DishEntity])],
+    imports: [
+        TypeOrmModule.forFeature([Order, RestaurantEntity, OrderItem, DishEntity])],
     providers: [
         OrderService, OrderResolver
     ]

@@ -19,7 +19,7 @@ import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/infra/db/entities/order.entity';
 import { OrderItem } from './orders/infra/db/entities/order-item.entity';
 import { PaymentsModule } from './payments/payments.module';
-import { Payment } from './payments/infra/db/entities/payment.entity';
+import { PaymentEntity } from './payments/infra/db/entities/payment.entity';
 import { ScheduleModule } from '@nestjs/schedule'
 import { HeadthCheckController } from './headth-check/headth-check.controller';
 import { TerminusModule } from '@nestjs/terminus';
@@ -57,7 +57,7 @@ import { TerminusModule } from '@nestjs/terminus';
       database: process.env.NODE_ENV !== 'prod' ? process.env.DB_NAME : process.env.RDS_DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [UserEntity, VerificationEntity, RestaurantEntity, CategoryEntity, DishEntity, Order, OrderItem, Payment],
+      entities: [UserEntity, VerificationEntity, RestaurantEntity, CategoryEntity, DishEntity, Order, OrderItem, PaymentEntity],
     }),
     GraphQLModule.forRootAsync( {
       driver: ApolloDriver,
