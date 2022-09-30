@@ -1,6 +1,6 @@
 # Delivery-food-service
 ```
- Feedback을 받으며 Refactoring 중입니다. 요구사항에 대한 기능은 구현하였으며, 현재 Local 환경 실행만 가능합니다.
+ 현재 Local 환경 실행만 가능합니다. 개선 방안을 찾으며 지속적으로 리팩토링을 하며 다음 프로젝트에 쓰일 기술 스택을 정리하였습니다.
 ```
 ## 관련 기술 정리 링크
 - 개발 환경 : [TypeScript/NestJS][TS_LINK], [GraphQL][GRAPHQL_LINK], TypeORM
@@ -41,6 +41,9 @@
     ```
      http://localhost:4000/graphql
     ```
+    ![스크린샷 2022-09-30 오후 4 34 33](https://user-images.githubusercontent.com/91730236/193217057-fa993b0d-f591-43f4-987e-4a0a53901102.png)
+
+
     - graphql로 보내는 데이터 스키마는 [링크](https://github.com/t0e8r1r4y/delivery-food-service/blob/main/schema.graphql)에 정의되어 있음.
 
 ## 구현 요구 사항 목록
@@ -95,9 +98,9 @@
           │   └── ./src/restaurants/interface
           │       └── ./src/restaurants/interface/dtos
        ```
-       - infra -> interface -> application -> domain 로 디렉터리를 구분함
-       - 의존성의 방향이 한 방향으로 흐르도록함
-    - 객체지향 생활체조 원칙을 최대한 지켜가고자 노력함
+       - infra -> interface -> application -> domain 로 디렉터리를 구분하였습니다.
+       - 의존성의 방향이 한 방향으로 흐르도록 하였습니다.
+    - 객체지향 생활체조 원칙을 최대한 지켜가고자 노력하였습니다.
        - method decorator를 사용하여 가급적 한 메서드에 한 단계의 들여쓰기를 유지하려고 했습니다.
        - 또한 else 예약어를 사용하지 않을 수 있었습니다.
        - this를 제외하고 한 줄에 하나의 .을 찍도록 코드를 작성하였습니다.
@@ -185,8 +188,8 @@
 <br/>
 
 ## 개선 사항 작성
-- 관심사를 억지로 분리하면서 생긴 코드 정리 필요
-- 구분이 적절한지 피드백이 필요함
+- 관심사를 억지로 분리하면서 생긴 코드 정리 필요. 특히 주문과 관련해서 이미 Graphql로 PubSub 모델을 적용하였는데, 어플리케이션 내부에서 이벤트 소싱 패턴을 이중으로 구현하면서 둘 중 하나가 쓸모 없어짐.
+- 기능 설계 시 구현 기술을 명확하게 하지않아 발생하는 문제를 개선해야 함.
 - 객체지향 생활체조 원칙을 spring 기반으로 학습하다보니, 상대적으로 nestjs에서 적용이 미숙함.
 
 <br/>
@@ -254,6 +257,11 @@
     │       └── ./src/orders/interface/dtos
     ├── ./src/payments
     │   ├── ./src/payments/application
+    │   │   ├── ./src/payments/application/adapter
+    │   │   ├── ./src/payments/application/command
+    │   │   ├── ./src/payments/application/event
+    │   │   ├── ./src/payments/application/query
+    │   │   └── ./src/payments/application/service
     │   ├── ./src/payments/domain
     │   ├── ./src/payments/infra
     │   │   └── ./src/payments/infra/db
