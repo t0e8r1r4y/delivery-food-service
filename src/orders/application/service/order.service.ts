@@ -1,18 +1,18 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { RestaurantEntity } from "../restaurants/infra/db/entities/restaurant.entity";
-import { UserEntity, UserRole } from "../users/infra/db/entities/user.entity";
+import { RestaurantEntity } from "../../../restaurants/infra/db/entities/restaurant.entity";
+import { UserEntity, UserRole } from "../../../users/infra/db/entities/user.entity";
 import { Repository } from "typeorm";
-import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
-import { Order, OrderStatus } from "./entities/order.entity";
-import { OrderItem } from "./entities/order-item.entity";
-import { DishEntity } from "../restaurants/infra/db/entities/dish.entitiy";
-import { GetOrdersInput, GetOrdersOutput } from "./dtos/get-orders.dto";
-import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
-import { EditOrderInput, EditOrderOutput } from "./dtos/edit-order.dto";
-import { NEW_COOKED_ORDER, NEW_ORDER_UPDATE, NEW_PENDING_ORDER, PUB_SUB } from "../common/common.constants";
+import { CreateOrderInput, CreateOrderOutput } from "../../interface/dtos/create-order.dto";
+import { Order, OrderStatus } from "../../infra/db/entities/order.entity";
+import { OrderItem } from "../../infra/db/entities/order-item.entity";
+import { DishEntity } from "../../../restaurants/infra/db/entities/dish.entitiy";
+import { GetOrdersInput, GetOrdersOutput } from "../../interface/dtos/get-orders.dto";
+import { GetOrderInput, GetOrderOutput } from "../../interface/dtos/get-order.dto";
+import { EditOrderInput, EditOrderOutput } from "../../interface/dtos/edit-order.dto";
+import { NEW_COOKED_ORDER, NEW_ORDER_UPDATE, NEW_PENDING_ORDER, PUB_SUB } from "../../../common/common.constants";
 import { PubSub } from 'graphql-subscriptions';
-import { TakeOrderInput, TakeOrderOutput } from "./dtos/take-order.dto";
+import { TakeOrderInput, TakeOrderOutput } from "../../interface/dtos/take-order.dto";
 
 @Injectable()
 export class OrderService {

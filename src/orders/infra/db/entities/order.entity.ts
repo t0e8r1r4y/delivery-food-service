@@ -1,7 +1,7 @@
 import { Field, Float, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { CoreEntity } from "../../common/entities/core.entity";
-import { RestaurantEntity } from "../../restaurants/infra/db/entities/restaurant.entity";
-import { UserEntity } from "../../users/infra/db/entities/user.entity";
+import { CoreEntity } from "../../../../common/entities/core.entity";
+import { RestaurantEntity } from "../../../../restaurants/infra/db/entities/restaurant.entity";
+import { UserEntity } from "../../../../users/infra/db/entities/user.entity";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, RelationId } from "typeorm";
 import { OrderItem } from "./order-item.entity";
 import { IsEnum, IsNumber } from "class-validator";
