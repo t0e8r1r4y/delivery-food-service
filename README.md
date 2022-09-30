@@ -41,6 +41,7 @@
     ```
      http://localhost:4000/graphql
     ```
+    - graphql로 보내는 데이터 스키마는 [링크](https://github.com/t0e8r1r4y/delivery-food-service/blob/main/schema.graphql)에 정의되어 있음.
 
 ## 구현 요구 사항 목록
 - 기능적 요구사항
@@ -217,7 +218,16 @@
 <br/>
 
 ## 폴더 구조 설명
+    - auth : 인증관련 로직을 구현하였습니다. 인증이라함은 로그인시 '고객','점주','배달부'의 토큰 인증관련입니다.
+    - common : 로직 전반에서 공통적으로 사용되는 클래스, 데코레이터, dto, entity 등을 정의하였습니다.
+    - jwt : jwt 토큰 발생 관련 로직을 정의하였습니다.
+    - mail : mailgun 서비스로 회원가입시 확인 절차를 거치기 위한 외부 라이브러리 사용을 목적으로 구현한 로직입니다.
+    - order : 레스토랑에 주문과 관련된 로직입니다.
+    - restaurant : 점주가 레스토랑과 관련된 구현을 처리하기 위한 로직입니다.
+    - user : 사용자 관련된 구현을 처리하기 위한 로직입니다.
+    - payments : 결제와 관련된 로직입니다. ( 실질적인 금액 처리로직은 아닙니다. )
 ```
+.
 └── ./src
     ├── ./src/auth
     ├── ./src/common
@@ -230,11 +240,26 @@
     ├── ./src/jwt
     ├── ./src/mail
     ├── ./src/orders
-    │   ├── ./src/orders/dtos
-    │   └── ./src/orders/entities
+    │   ├── ./src/orders/application
+    │   │   ├── ./src/orders/application/command
+    │   │   ├── ./src/orders/application/event
+    │   │   ├── ./src/orders/application/qeury
+    │   │   └── ./src/orders/application/service
+    │   ├── ./src/orders/domain
+    │   ├── ./src/orders/infra
+    │   │   └── ./src/orders/infra/db
+    │   │       ├── ./src/orders/infra/db/entities
+    │   │       └── ./src/orders/infra/db/repository
+    │   └── ./src/orders/interface
+    │       └── ./src/orders/interface/dtos
     ├── ./src/payments
-    │   ├── ./src/payments/dtos
-    │   └── ./src/payments/entities
+    │   ├── ./src/payments/application
+    │   ├── ./src/payments/domain
+    │   ├── ./src/payments/infra
+    │   │   └── ./src/payments/infra/db
+    │   │       └── ./src/payments/infra/db/entities
+    │   └── ./src/payments/interface
+    │       └── ./src/payments/interface/dtos
     ├── ./src/restaurants
     │   ├── ./src/restaurants/application
     │   │   ├── ./src/restaurants/application/adapter
