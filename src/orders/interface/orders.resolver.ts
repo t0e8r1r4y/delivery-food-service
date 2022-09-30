@@ -4,7 +4,7 @@ import { AuthUser } from "../../auth/auth-user.decorator";
 import { UserEntity } from "../../users/infra/db/entities/user.entity";
 import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
 import { Order } from "../infra/db/entities/order.entity";
-import { OrderService } from "../application/order.service";
+import { OrderService } from "../application/service/order.service";
 import { GetOrdersInput, GetOrdersOutput } from "./dtos/get-orders.dto";
 import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
 import { EditOrderInput, EditOrderOutput } from "./dtos/edit-order.dto";

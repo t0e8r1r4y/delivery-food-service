@@ -30,19 +30,23 @@ import { TerminusModule } from '@nestjs/terminus';
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
       ignoreEnvFile: process.env.NODE_ENV === 'prod',
-      validationSchema: process.env.NODE_ENV === 'prod' ? Joi.object() :
-       Joi.object({
-        NODE_ENV: Joi.string().valid('dev', 'prod', 'test').required(),
-        DB_HOST: Joi.string().required(),
-        DB_PORT: Joi.string().required(),
-        DB_USERNAME: Joi.string().required(),
-        DB_PASSWORD: Joi.string().required(),
-        DB_NAME: Joi.string().required(),
-        PRIVATE_KEY: Joi.string().required(),
-        MAILGUN_API_KEY: Joi.string().required(),
-        MAILGUN_DOMAIN_NAME: Joi.string().required(),
-        MAILGUN_FROM_EMAIL: Joi.string().required(),
-      }),
+      validationSchema: process.env.NODE_ENV === 'prod' ? 
+        Joi.object({
+          NODE_ENV: Joi.string().valid('dev', 'prod', 'test').required(),
+          
+        }) :
+        Joi.object({
+          NODE_ENV: Joi.string().valid('dev', 'prod', 'test').required(),
+          DB_HOST: Joi.string().required(),
+          DB_PORT: Joi.string().required(),
+          DB_USERNAME: Joi.string().required(),
+          DB_PASSWORD: Joi.string().required(),
+          DB_NAME: Joi.string().required(),
+          PRIVATE_KEY: Joi.string().required(),
+          MAILGUN_API_KEY: Joi.string().required(),
+          MAILGUN_DOMAIN_NAME: Joi.string().required(),
+          MAILGUN_FROM_EMAIL: Joi.string().required(),
+        }),
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
