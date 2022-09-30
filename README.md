@@ -106,7 +106,7 @@
        ```
             '@nestjs/cqrs';
        ```
-       - 이 부분을 나눠야겠다고 생각한 이유는 GraphQL도 Query와 Mutation을 구분하는데, read와 write를 구분하는 이유는 구현과정에서 상호 영향을 줄 수 있기 때문입니다. 그것을 구분하기 위해서 command와 query로 구분하여 구현하였습니다.
+       - 이 부분을 나눠야겠다고 생각한 이유는 service를 구현할 때 read와 write를 구분하는 이유는 상호 종속성을 배제하기 위함입니다.
 - TDD 적용 연습
     - 테스트 코드가 어떻게 적용이 되면 좋을지 고민하였는데, 테스트도 로직이 분리된 만큼 분리되기에 내용을 파악하는데 더 유용하다고 생각했습니다.
     - spring에서는 객체 생성부터 테스트 함수를 만들고, 실패하는 부분에서 객체를 생성하며 진행하지만 jest에서 그렇게 적용하기에 바로 에러가 발생해서 힘든 부분이 있었습니다.
@@ -146,7 +146,7 @@
     | --- | --- | --- |
     | @nestjs/apollo | 10.0.22 | graphQL을 사용하기 위한 목적으로 apollo 사용 |
     | apollo-server-express | 3.10.2 | 상동 |
-    | @nestjs/graphql | 10.1.0 |  |
+    | @nestjs/graphql | 10.1.0 |   |
     | graphql | 16.6.0 | 상동 |
     | graphql-subscriptions | 2.0.0 | graphql에서 제공하는 websocket을 사용하기 위함 |
     | graphql-ws | 5.10.1 | 상동( 위 내용과 사용법이 다름 ) |
