@@ -1,6 +1,7 @@
 # Delivery-food-service
 ```
- 현재 Local 환경 실행만 가능합니다. 개선 방안을 찾으며 지속적으로 리팩토링을 하며 다음 프로젝트에 쓰일 기술 스택을 정리하였습니다.
+ 현재 Local 환경 실행만 가능합니다. Elastic BeansTalk에 배포를 해볼 예정입니다. 기존 EC2 + RDS 배포에서 변환 중
+ user와 restaurant 코드 리팩토링을 진행하였으며, order와 payment front에 제공되는 구조 상의 문제로 리팩토링 잠정 중단.
 ```
 ## 관련 기술 정리 링크
 - 개발 환경 : [TypeScript/NestJS][TS_LINK], [GraphQL][GRAPHQL_LINK], TypeORM
