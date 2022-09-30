@@ -16,10 +16,10 @@ import { CategoryEntity } from './restaurants/infra/db/entities/category.entity'
 import { RestaurnatsModule } from './restaurants/restaurants.module';
 import { DishEntity } from './restaurants/infra/db/entities/dish.entitiy';
 import { OrdersModule } from './orders/orders.module';
-import { Order } from './orders/entities/order.entity';
-import { OrderItem } from './orders/entities/order-item.entity';
+import { Order } from './orders/infra/db/entities/order.entity';
+import { OrderItem } from './orders/infra/db/entities/order-item.entity';
 import { PaymentsModule } from './payments/payments.module';
-import { Payment } from './payments/entities/payment.entity';
+import { Payment } from './payments/infra/db/entities/payment.entity';
 import { ScheduleModule } from '@nestjs/schedule'
 import { HeadthCheckController } from './headth-check/headth-check.controller';
 import { TerminusModule } from '@nestjs/terminus';
@@ -30,7 +30,8 @@ import { TerminusModule } from '@nestjs/terminus';
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
       ignoreEnvFile: process.env.NODE_ENV === 'prod',
-      validationSchema: Joi.object({
+      validationSchema: process.env.NODE_ENV === 'prod' ? Joi.object() :
+       Joi.object({
         NODE_ENV: Joi.string().valid('dev', 'prod', 'test').required(),
         DB_HOST: Joi.string().required(),
         DB_PORT: Joi.string().required(),

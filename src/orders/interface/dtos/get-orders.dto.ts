@@ -1,6 +1,6 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { CoreOutput } from "../../common/dtos/output.dto";
-import { Order, OrderStatus } from "../entities/order.entity";
+import { CoreOutput } from "../../../common/dtos/output.dto";
+import { Order, OrderStatus } from "../../infra/db/entities/order.entity";
 
 @InputType()
 export class GetOrdersInput {

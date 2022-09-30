@@ -5,8 +5,8 @@ import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from "@nestjs/common";
 import { IsBoolean, IsEmail, IsEnum, IsString } from "class-validator";
 import { RestaurantEntity } from "../../../../restaurants/infra/db/entities/restaurant.entity";
-import { Order } from "../../../../orders/entities/order.entity";
-import { Payment } from "../../../../payments/entities/payment.entity";
+import { Order } from "../../../../orders/infra/db/entities/order.entity";
+import { Payment } from "../../../../payments/infra/db/entities/payment.entity";
 
 export enum UserRole {
     Client = 'Client',

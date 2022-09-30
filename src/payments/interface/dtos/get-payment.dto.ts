@@ -1,6 +1,6 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { CoreOutput } from "../../common/dtos/output.dto";
-import { Payment } from "../entities/payment.entity";
+import { CoreOutput } from "../../../common/dtos/output.dto";
+import { Payment } from "../../infra/db/entities/payment.entity";
 
 @ObjectType()
 export class GetPaymentOutput extends CoreOutput {

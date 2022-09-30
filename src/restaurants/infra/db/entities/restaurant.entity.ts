@@ -5,7 +5,7 @@ import { Column, Entity, ManyToOne, OneToMany, RelationId } from "typeorm";
 import { CategoryEntity } from "./category.entity";
 import { UserEntity } from "../../../../users/infra/db/entities/user.entity";
 import { DishEntity } from "./dish.entitiy";
-import { Order } from "../../../../orders/entities/order.entity";
+import { Order } from "../../../../orders/infra/db/entities/order.entity";
 
 @InputType( 'RestuarnatInputType' , {isAbstract:true})
 @ObjectType()

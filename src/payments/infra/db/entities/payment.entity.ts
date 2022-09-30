@@ -1,7 +1,7 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { CoreEntity } from '../../common/entities/core.entity';
-import { RestaurantEntity } from '../../restaurants/infra/db/entities/restaurant.entity';
-import { UserEntity } from '../../users/infra/db/entities/user.entity';
+import { CoreEntity } from '../../../../common/entities/core.entity';
+import { RestaurantEntity } from '../../../../restaurants/infra/db/entities/restaurant.entity';
+import { UserEntity } from '../../../../users/infra/db/entities/user.entity';
 import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 
 @InputType('PaymentInputType', { isAbstract: true })
