@@ -1,6 +1,6 @@
 # Delivery-food-service
 
-- 현재 Local 환경 실행만 가능합니다. ( Elastic BeansTalk에 배포를 해볼 예정입니다. 기존 EC2 + RDS 배포에서 변환 중 )
+- 현재 Local 환경 실행만 가능합니다. ( 비용문제로 AWS 배포 중단 )
 - user와 restaurant 코드 리팩토링을 진행하였으며, order와 payment front에 제공되는 구조 상의 문제로 리팩토링 잠정 중단.
 
 ## 구현 요구 사항 목록
@@ -41,7 +41,7 @@
 
 ## 관련 기술 정리 링크
 - 개발 환경 : [TypeScript/NestJS][TS_LINK], [GraphQL][GRAPHQL_LINK], TypeORM
-- 운영 환경 : AWS EC2 & RDS -> [Elastic BeansTalk][EB_LINK]로 전환 진행 중
+- 운영 환경 : 비용문제로 AWS 배포 중단
 
 ## 설치, 환경설정 및 실행 방법
 - 사전 세팅
@@ -49,7 +49,7 @@
     - PostgreSQL을 설치한다. ( AWS 환경에서는 RDS 세팅을 동시에 진행함 )
 - AWS Elastic BeansTalk
     ```
-     (전환 중)
+     (비용문제로 AWS 배포 중단)
     ```
 - Local 실행
     ```
