@@ -1,9 +1,23 @@
-# Delivery-food-service
+# :pizza: Delivery-food-service
 
-- 현재 Local 환경 실행만 가능합니다. ( 비용문제로 AWS 배포 중단 )
-- user와 restaurant 코드 리팩토링을 진행하였으며, order와 payment front에 제공되는 구조 상의 문제로 리팩토링 잠정 중단.
+> 현재 Local 환경 실행만 가능합니다. ( 비용문제로 AWS 배포 중단 )  
+> user와 restaurant 코드 리팩토링을 진행하였으며, order와 payment front에 제공되는 구조 상의 문제로 리팩토링 잠정 중단.
 
-## 구현 요구 사항 목록
+<br/>
+
+### :small_orange_diamond: 기술 키워드 : [NestJS][TS_LINK], [GraphQL][GRAPHQL_LINK], [Elatic BeansTalk][EB_LINK], [CQRS][CQRS_LINK]
+
+<br/>
+
+## :white_check_mark: 프로젝트 개요
+- '배달의 민족'을 모티브로 개발해본 음식 배달 서비스입니다.
+- FrontEnd 요청에 유현한 응답을 제공하기 위해 GraphQL을 적용한 프로젝트입니다.
+- CQRS 패턴을 적용한 프로젝트입니다. GraphQL의 워크로드와 동일한 워크로드를 가져가고자 합니다.
+- 읽기와 쓰기 워크로드의 비대칭성에 따라 향후 어플리케이션을 분리한 CQRS 패턴을 적용하여 확장성을 가지고자 메서드들을 파일단위로 구분하여 코드를 작성하였습니다.
+
+<br/>
+
+##  :white_check_mark: 구현 요구 사항 목록
 - 기능적 요구사항
 
       1. 유저는 회원가입을 할 수 있다.
@@ -27,7 +41,7 @@
 
 <br/>
 
-## 폴더 구조 설명 ( 하단 Tree 구조 첨부 )
+##  :white_check_mark: 폴더 구조 설명 ( 하단 Tree 구조 첨부 )
     - auth : 인증관련 로직을 구현하였습니다. 인증이라함은 로그인시 '고객','점주','배달부'의 토큰 인증관련입니다.
     - common : 로직 전반에서 공통적으로 사용되는 클래스, 데코레이터, dto, entity 등을 정의하였습니다.
     - jwt : jwt 토큰 발생 관련 로직을 정의하였습니다.
@@ -39,11 +53,7 @@
 
 <br/>
 
-## 관련 기술 정리 링크
-- 개발 환경 : [TypeScript/NestJS][TS_LINK], [GraphQL][GRAPHQL_LINK], TypeORM
-- 운영 환경 : 비용문제로 AWS 배포 중단
-
-## 설치, 환경설정 및 실행 방법
+##  :white_check_mark: 설치, 환경설정 및 실행 방법
 - 사전 세팅
     - MailGun 서비스 사용이 가능하도록 회원가입을 하고 Key, API Key, Domain name, FROM Email 정보를 환경변수에 등록한다.
     - PostgreSQL을 설치한다. ( AWS 환경에서는 RDS 세팅을 동시에 진행함 )
@@ -86,9 +96,9 @@
 <br/>
 
 
-## 과제 진행 시 주안점
-####  :one: 좋은 코드를 작성하고 싶었습니다.
-- 클린 아키텍처를 위한 구조
+##  :white_check_mark: Technical Issue ( 프로젝트를 진행하며 고민한 사항과 주안점 )
+####  :one: 클린아키텍처를 적용
+- 구조
 ```
    ├── ./src/restaurants
    │   ├── ./src/restaurants/application
@@ -112,7 +122,7 @@
 
 <br/>
 
-####  :two: 객체지향 생활체조 원칙을 최대한 지켜가고자 노력하였습니다.
+####  :two: method decorator를 적극 사용하여 try-catch 로직을 숨기고 서비스 로직을 간결하게 표현하였습니다.
 - method decorator를 사용하여 가급적 한 메서드에 한 단계의 들여쓰기를 유지하려고 했습니다.
 - 또한 else 예약어를 사용하지 않을 수 있었습니다.
 - this를 제외하고 한 줄에 하나의 .을 찍도록 코드를 작성하였습니다.
@@ -159,7 +169,7 @@
 ```
      '@nestjs/cqrs';
 ```
-- 이 부분을 나눠야겠다고 생각한 이유는 service를 구현할 때 read와 write를 구분하는 이유는 상호 종속성을 배제하기 위함입니다.
+-  GraphQL에서 query와 mutation에 대한 워크로드와 동일한 흐름으로 서비스를 분리하였습니다. 읽기와 쓰기 워크로드의 비대칭성에 따라 향후 어플리케이션을 분리한 CQRS 패턴을 적용하여 확장성을 가지기 용이하도록 메서드 단위로 파일을 구분하였습니다.
        
  
 <br/>
@@ -192,21 +202,31 @@
 ```
 <br/>
 
-#### :six: 운영환경
+#### :six: GraphQL에서 제공하는 웹소켓을 사용
+- GraphQL에서 제공하는 웹소켓을 사용하여 주문상태를 실시간 업데이트 하였습니다.
+
+<br/>
+
+#### :seven: Token(JWT)를 사용
+- Token(JWT)를 사용하여 인증된 사용자와 사용자의 역할에 따른 요청과 응답이 가능하도록 하였습니다.
+
+<br/>
+
+#### :eight: 운영환경
 - 간단한 어플리케이션을 리팩토링 할 경우가 많고, 운영환경에서 테스트 방법을 고민해보기 위해서 배포의 편의성이 중요하다고 생각했습니다.
 - git repository에 push하면 codepipeline을 통해 자동배포를 하고자 하였습니다.
 
 
 <br/>
 
-## 개선 사항 작성
+##  :white_check_mark: 개선 사항 작성
 - 관심사를 억지로 분리하면서 생긴 코드 정리 필요. 특히 주문과 관련해서 이미 Graphql로 PubSub 모델을 적용하였는데, 어플리케이션 내부에서 이벤트 소싱 패턴을 이중으로 구현하면서 둘 중 하나가 쓸모 없어짐.
 - 기능 설계 시 구현 기술을 명확하게 하지않아 발생하는 문제를 개선해야 함.
 - 객체지향 생활체조 원칙을 spring 기반으로 학습하다보니, 상대적으로 nestjs에서 적용이 미숙함.
 
 <br/>
 
-## 사용한 라이브러리 설명  
+##  :white_check_mark: 사용한 라이브러리 설명  
           
 - 사용 라이브러리 설명
 
@@ -314,3 +334,4 @@
    [TS_LINK]: <https://github.com/t0e8r1r4y/blogContents/tree/main/DEV/ts>
    [GRAPHQL_LINK]: <https://github.com/t0e8r1r4y/blogContents/blob/main/GraphQL/Apollo.md>
    [EB_LINK]: <https://github.com/t0e8r1r4y/container-and-k8s-aws/blob/main/AWS/EB.md>
+   [CQRS_LINK]: <https://github.com/t0e8r1r4y/blogContents/blob/main/ArchitecturalPatterns/CQRS.md>
